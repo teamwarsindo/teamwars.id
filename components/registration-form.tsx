@@ -273,7 +273,7 @@ export function RegistrationForm() {
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 onBlur={() => markTouched("email")}
-                placeholder="nama@email.com"
+                placeholder="nama@gmail.com"
                 className={`${inputBase} ${
                   err("email") ? "border-destructive" : "border-border"
                 }`}
