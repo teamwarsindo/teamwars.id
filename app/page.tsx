@@ -30,7 +30,7 @@ export default function Page() {
               alt="Logo Team Wars Indonesia"
               fill
               priority
-              className="object-cover scale-[1.35]" 
+              className="object-cover scale-[1.15]" 
             />
           </div>
           <h1 className="glow-text text-balance text-3xl font-bold tracking-tight sm:text-4xl">
