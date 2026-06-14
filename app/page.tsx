@@ -42,7 +42,7 @@ export default function Page() {
           </p>
           <p className="mt-5 max-w-md text-pretty text-sm leading-relaxed text-muted-foreground">
             Lengkapi formulir pendaftaran resmi di bawah ini untuk mendaftarkan tim Anda
-            pada turnamen. Draf akan tersimpan otomatis di perangkat ini.
+            pada turnamen. Biaya pendaftaran Rp 300.000 di transfer ke rekening BCA 0460967538 a.n Victor Widiputra.
           </p>
         </header>
 
