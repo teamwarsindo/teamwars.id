@@ -24,21 +24,18 @@ export default function Page() {
       <div className="relative z-10 mx-auto w-full max-w-2xl px-4 pb-16 pt-6 sm:px-6">
         {/* Header */}
         <header className="mb-10 flex flex-col items-center text-center">
-          {/* 1. BINGKAI KAKU: Beri w-[120px] dan h-[120px] langsung di div pembungkus, plus relative */}
           <div className="relative mb-6 h-[120px] w-[120px] overflow-hidden rounded-2xl glow-border">
             <Image
-              src="/logo.webp" // Sesuaikan ekstensi file
+              src="/logo.webp"
               alt="Logo Team Wars Indonesia"
-              fill // Menggantikan width dan height agar gambar menyesuaikan bingkai
+              fill
               priority
-              {/* 2. ZOOM EFEKTIF: Gunakan scale-[1.35] (zoom 35%). Angka ini bisa Kapten naik/turunkan */}
               className="object-cover scale-[1.35]" 
             />
           </div>
           <h1 className="glow-text text-balance text-3xl font-bold tracking-tight sm:text-4xl">
             TEAM WARS INDONESIA
           </h1>
-          {/* ... sisa kode ke bawah ... */}
           <p className="mt-3 inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-primary">
             Season 7 — Duel Links
           </p>
