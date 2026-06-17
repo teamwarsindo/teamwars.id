@@ -45,22 +45,22 @@ export default function Page() {
       <div className="relative z-10 mx-auto flex min-h-svh max-w-5xl flex-col px-5 py-6 sm:px-8 sm:py-8">
         {/* Top bar */}
         <header className="flex items-center justify-between">
-
+          {/* Bagian Kiri: Logo & Tulisan TWI */}
           <div className="flex items-center gap-2">
             <img
               src="/favicon.ico"
               alt="TWI Logo"
               className="h-6 w-6 object-cover"
             />
-
-           <div className="absolute left-1/2 -translate-x-1/2 sm:static sm:translate-x-0">
-             <ThemeToggle />
-           </div>
-
             <span className="font-heading text-xs font-semibold uppercase tracking-[0.15em] text-foreground sm:text-base">
               TWI Season 7
             </span>
           </div>
+          {/* Bagian Tengah/Kanan: Tombol Theme Toggle */}
+          <div className="absolute left-1/2 -translate-x-1/2 sm:static sm:translate-x-0">
+            <ThemeToggle />
+          </div>
+          {/* Bagian Kanan: Label Under Construction */}
           <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-3 py-1.5 text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground backdrop-blur-sm sm:text-xs">
             <span className="relative flex h-2 w-2">
               <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
