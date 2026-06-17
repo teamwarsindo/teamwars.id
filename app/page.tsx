@@ -1,7 +1,7 @@
 import { Countdown } from "@/components/countdown"
 import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
-import { Swords, Users, Trophy, CalendarClock } from "lucide-react"
+import { BookOpen, CalendarClock } from "lucide-react"
 
 // Launch target — replace with the real tournament date.
 const LAUNCH_TARGET = new Date("2026-07-01T08:00:00+07:00").getTime()
@@ -103,7 +103,7 @@ export default function Page() {
                 "h-11 w-full gap-2 border-primary/40 bg-transparent px-6 text-base font-semibold text-foreground hover:bg-primary/10 hover:text-foreground sm:w-auto [&_svg:not([class*='size-'])]:size-5",
               )}
             >
-              <Users className="h-5 w-5" />
+              <BookOpen className="h-5 w-5" />
               Rulebook TWI Season 7
             </a>
           </div>
