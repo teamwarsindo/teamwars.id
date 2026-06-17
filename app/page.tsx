@@ -44,11 +44,13 @@ export default function Page() {
       <div className="relative z-10 mx-auto flex min-h-svh max-w-5xl flex-col px-5 py-6 sm:px-8 sm:py-8">
         {/* Top bar */}
         <header className="flex items-center justify-between">
-          <div className="flex items-center gap-2.5">
-            <span className="flex h-9 w-9 items-center justify-center rounded-md border border-primary/40 bg-primary/10 text-primary">
-              <Swords className="h-5 w-5" />
-            </span>
-            <span className="font-heading text-sm font-semibold uppercase tracking-[0.18em] text-foreground sm:text-base">
+          <div className="flex items-center gap-2">
+            <img
+              src="/favicon.ico"
+              alt="TWI Logo"
+              className="h-6 w-6 object-cover"
+            />
+            <span className="font-heading text-xs font-semibold uppercase tracking-[0.15em] text-foreground sm:text-base">
               TWI Season 7
             </span>
           </div>
