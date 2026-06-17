@@ -170,3 +170,34 @@ export function ShieldIcon(props: SVGProps<SVGSVGElement>) {
     </svg>
   )
 }
+
+export function LockIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.6"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      {...props}
+    >
+      <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
+      <path d="M7 11V7a5 5 0 0 1 10 0v4" />
+    </svg>
+  )
+}
+
+export function DiscordIcon(props: SVGProps<SVGSVGElement>) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      fill="currentColor"
+      aria-hidden="true"
+      {...props}
+    >
+      <path d="M20.317 4.369A19.79 19.79 0 0 0 15.885 3a13.7 13.7 0 0 0-.617 1.27 18.27 18.27 0 0 0-5.535 0A13.2 13.2 0 0 0 9.108 3a19.74 19.74 0 0 0-4.432 1.369C1.69 8.79.87 13.1 1.28 17.347a19.92 19.92 0 0 0 6.067 3.08c.49-.668.927-1.377 1.304-2.122a12.9 12.9 0 0 1-2.053-.987c.172-.127.34-.26.5-.396a14.23 14.23 0 0 0 12.2 0c.163.14.331.272.5.396-.655.388-1.343.72-2.056.989.377.744.813 1.453 1.303 2.12a19.84 19.84 0 0 0 6.07-3.08c.48-4.923-.82-9.193-3.398-12.978ZM8.02 14.762c-1.183 0-2.157-1.085-2.157-2.42 0-1.333.955-2.42 2.157-2.42 1.21 0 2.176 1.096 2.157 2.42 0 1.335-.955 2.42-2.157 2.42Zm7.975 0c-1.183 0-2.157-1.085-2.157-2.42 0-1.333.955-2.42 2.157-2.42 1.21 0 2.176 1.096 2.157 2.42 0 1.335-.946 2.42-2.157 2.42Z" />
+    </svg>
+  )
+}
