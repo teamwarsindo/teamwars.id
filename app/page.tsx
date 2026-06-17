@@ -4,7 +4,7 @@ import { Countdown } from "@/components/countdown"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { buttonVariants } from "@/components/ui/button"
 import { BookOpen, CalendarClock } from "lucide-react"
-import { DiscordIcon, LockIcon } from "@/components/icons"
+import { DiscordIcon, ShieldIcon } from "@/components/icons"
 
 
 // Launch target — replace with the real tournament date.
@@ -14,7 +14,7 @@ const DISCORD_URL = "https://discord.gg/hTJJRevA43"
 
 export default function Page() {
   return (
-    <main className="relative min-h-screen overflow-hidden bg-background text-foreground">
+    <main className="relative min-h-[100dvh] overflow-hidden bg-background text-foreground">
       {/* Ambient esports glow behind the header */}
       <div
         className="ambient-glow pointer-events-none absolute inset-x-0 top-0 h-[420px]"
@@ -24,8 +24,8 @@ export default function Page() {
       {/* Top bar */}
       <div className="relative z-10 mx-auto flex w-full max-w-2xl items-center justify-between px-4 pt-6 sm:px-6">
         <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
-          <LockIcon className="h-4 w-4 text-primary" />
-          Team Registration
+          <ShieldIcon className="h-4 w-4 text-primary" />
+          Official Website
         </div>
         <ThemeToggle />
       </div>
