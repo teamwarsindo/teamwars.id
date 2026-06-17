@@ -51,10 +51,10 @@ export default function Page() {
         </header>
 
         {/* Hero */}
-        <section className="flex flex-1 flex-col items-center justify-center py-12 text-center sm:py-16">      
+        <section className="flex flex-1 flex-col items-center justify-center py-3 text-center sm:py-4">      
       
           {/* Countdown */}
-          <div className="mt-10 w-full max-w-xl">
+          <div className="mt-5 w-full max-w-xl">
             <p className="mb-4 text-xs font-medium uppercase tracking-[0.3em] text-muted-foreground">
               Battle Begins In
             </p>
@@ -62,7 +62,7 @@ export default function Page() {
           </div>
 
           {/* CTAs */}
-          <div className="mt-10 flex w-full max-w-md flex-col items-center gap-3 sm:flex-row sm:justify-center">
+          <div className="mt-5 flex w-full max-w-md flex-col items-center gap-3 sm:flex-row sm:justify-center">
             <a
               href={DISCORD_URL}
               target="_blank"
