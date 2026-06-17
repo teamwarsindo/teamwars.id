@@ -3,6 +3,7 @@ import { buttonVariants } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { BookOpen, CalendarClock, Lock } from "lucide-react"
 import { ThemeToggle } from "@/components/theme-toggle"
+import Image from "next/image"
 
 // Launch target — replace with the real tournament date.
 const LAUNCH_TARGET = new Date("2026-07-01T08:00:00+07:00").getTime()
