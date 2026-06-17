@@ -24,50 +24,40 @@ function DiscordIcon({ className }: { className?: string }) {
 
 export default function Page() {
   return (
-    <main className="relative min-h-svh overflow-hidden bg-background">
-      {/* 1. LAPISAN GAMBAR RESPONSIVE (Potret untuk HP, Landscape untuk PC) */}
+    <main className="relative min-h-screen overflow-hidden bg-background text-foreground">
+      {/* Ambient esports glow behind the header */}
       <div
-        className="pointer-events-none absolute inset-0 bg-cover bg-center bg-no-repeat opacity-60 bg-[url('/arena-bg.png')] md:bg-[url('/arena-bg-ls.png')]"
+        className="ambient-glow pointer-events-none absolute inset-x-0 top-0 h-[420px]"
         aria-hidden="true"
       />
-      
-      {/* 2. LAPISAN GRADASI (Penyeimbang kontras agar teks di depan tetap terbaca) */}
-      <div
-        className="pointer-events-none absolute inset-0 bg-gradient-to-b from-background/40 via-background/70 to-background"
-        aria-hidden="true"
-      />
-      
-      {/* 3. LAPISAN GRID E-SPORTS (Estetika garis-garis arena) */}
-      <div className="pointer-events-none absolute inset-0 grid-overlay" aria-hidden="true" />
 
-      {/* Konten tulisan "Team Wars Indonesia" dan Countdown Kapten ada di bawah sini... */}
-      {/* Content */}
-      <div className="relative z-10 mx-auto flex min-h-svh max-w-5xl flex-col px-5 py-6 sm:px-8 sm:py-8">
-        {/* Top bar */}
-        <header className="flex items-center justify-between">
-          {/* Bagian Kiri: Logo & Tulisan TWI */}
-          <div className="flex items-center gap-2">
-            <img
-              src="/favicon.ico"
-              alt="TWI Logo"
-              className="h-6 w-6 object-cover"
+      {/* Top bar */}
+      <div className="relative z-10 mx-auto flex w-full max-w-2xl items-center justify-between px-4 pt-6 sm:px-6">
+        <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
+          <ShieldIcon className="h-4 w-4 text-primary" />
+          Under Construction
+        </div>
+        <ThemeToggle />
+      </div>
+
+      <div className="relative z-10 mx-auto w-full max-w-2xl px-4 pb-16 pt-6 sm:px-6">
+        {/* Header */}
+        <header className="mb-10 flex flex-col items-center text-center">
+          <div className="relative mb-6 h-[120px] w-[120px] overflow-hidden rounded-2xl glow-border">
+            <Image
+              src="/logo.webp"
+              alt="Logo Team Wars Indonesia"
+              fill
+              priority
+              className="object-cover scale-[1.01]" 
             />
-            <span className="font-heading text-xs font-semibold uppercase tracking-[0.15em] text-foreground sm:text-base">
-              TWI Season 7
-            </span>
           </div>
-          {/* Bagian Tengah/Kanan: Tombol Theme Toggle */}
-          <div className="absolute left-1/2 -translate-x-1/2 sm:static sm:translate-x-0">
-            <ThemeToggle />
-          </div>
-          {/* Bagian Kanan: Label Under Construction */}
-          <span className="inline-flex items-center gap-2 rounded-full border border-border bg-card/60 px-3 py-1.5 text-[10px] font-medium uppercase tracking-[0.2em] text-muted-foreground backdrop-blur-sm sm:text-xs">
-            <span className="relative flex h-2 w-2">
-              <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-primary opacity-75" />
-              <span className="relative inline-flex h-2 w-2 rounded-full bg-primary" />
-            </span>
-            Under Construction
-          </span>
+          <h1 className="glow-text text-balance text-3xl font-bold tracking-tight sm:text-4xl">
+            TEAM WARS INDONESIA
+          </h1>
+          <p className="mt-3 inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-primary">
+            Season 7 — Duel Links
+          </p>
         </header>
 
         {/* Hero */}
