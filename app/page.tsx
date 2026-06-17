@@ -3,8 +3,7 @@ import { cn } from "@/lib/utils"
 import { Countdown } from "@/components/countdown"
 import { ThemeToggle } from "@/components/theme-toggle"
 import { buttonVariants } from "@/components/ui/button"
-import { BookOpen, CalendarClock } from "lucide-react"
-import { DiscordIcon, ShieldIcon } from "@/components/icons"
+import { ShieldIcon, DiscordIcon, RulesIcon, FormIcon } from "@/components/icons"
 
 
 // Launch target — replace with the real tournament date.
@@ -82,8 +81,18 @@ export default function Page() {
                 "h-11 w-full gap-2 border-primary/40 bg-transparent px-6 text-base font-semibold text-foreground hover:bg-primary/10 hover:text-foreground sm:w-auto [&_svg:not([class*='size-'])]:size-5",
               )}
             >
-              <BookOpen className="h-5 w-5" />
+              <RulesaIcon className="h-5 w-5" />
               Rulebook TWI Season 7
+            </a>
+            <a
+              href="#"
+              className={cn(
+                buttonVariants({ size: "lg", variant: "outline" }),
+                "h-11 w-full gap-2 border-primary/40 bg-transparent px-6 text-base font-semibold text-foreground hover:bg-primary/10 hover:text-foreground sm:w-auto [&_svg:not([class*='size-'])]:size-5",
+              )}
+            >
+              <FormIcon className="h-5 w-5" />
+              Team Registration
             </a>
           </div>
         </section>
