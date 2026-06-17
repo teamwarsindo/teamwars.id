@@ -45,17 +45,18 @@ export default function Page() {
       <div className="relative z-10 mx-auto flex min-h-svh max-w-5xl flex-col px-5 py-6 sm:px-8 sm:py-8">
         {/* Top bar */}
         <header className="flex items-center justify-between">
-         <main className="min-h-screen relative flex flex-col items-center ...">
-           {/* Tombol diletakkan absolut di pojok kanan atas */}
-           <div className="absolute top-4 right-4 z-50">
-             <ThemeToggle />
-           </div> 
+
           <div className="flex items-center gap-2">
             <img
               src="/favicon.ico"
               alt="TWI Logo"
               className="h-6 w-6 object-cover"
             />
+
+           <div className="absolute left-1/2 -translate-x-1/2 sm:static sm:translate-x-0">
+             <ThemeToggle />
+           </div>
+
             <span className="font-heading text-xs font-semibold uppercase tracking-[0.15em] text-foreground sm:text-base">
               TWI Season 7
             </span>
