@@ -6,7 +6,7 @@ import { buttonVariants } from "@/components/ui/button"
 import { ShieldIcon, DiscordIcon, RulesIcon, FormIcon } from "@/components/icons"
 
 // Launch target — replace with the real tournament date.
-const LAUNCH_TARGET = new Date("2026-07-01T08:00:00+07:00").getTime()
+const LAUNCH_TARGET = new Date("2027-07-01T08:00:00+07:00").getTime()
 const DISCORD_URL = "https://discord.gg/hTJJRevA43"
 
 export default function Page() {
