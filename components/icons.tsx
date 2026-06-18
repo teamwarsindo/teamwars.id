@@ -202,7 +202,7 @@ export function DiscordIcon(props: SVGProps<SVGSVGElement>) {
   )
 }
 
-export function RulebookIcon(props: SVGProps<SVGSVGElement>) {
+export function RulesIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       viewBox="0 0 24 24"
