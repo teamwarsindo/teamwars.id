@@ -100,7 +100,7 @@ export default function Page() {
         </section>
 
         {/* Footer - Mesin mt-auto sekarang aktif mendorongnya ke paling bawah layar */}
-        <footer className="mt-auto pb-2 pt-4 text-center text-[11px] text-muted-foreground">
+        <footer className="mt-auto pt-4 text-center text-[11px] text-muted-foreground">
           © {new Date().getFullYear()} Team Wars Indonesia. All rights reserved.
         </footer>
       </div>
