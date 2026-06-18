@@ -42,7 +42,7 @@ export default function Page() {
           <p className="mt-3 inline-flex items-center gap-2 rounded-full border border-primary/40 bg-primary/10 px-4 py-1 text-xs font-semibold uppercase tracking-[0.2em] text-primary lg:mt-5">
             Season 7 — Duel Links
           </p>
-          <p className="mt-5 max-w-md text-pretty text-sm leading-relaxed text-muted-foreground">
+          <p className="mt-6 max-w-md text-pretty text-sm leading-relaxed text-muted-foreground">
             Biaya pendaftaran Rp 300.000 di transfer ke rekening BCA 0460967538 a.n Victor Widiputra.
           </p>
         </header>
