@@ -89,7 +89,7 @@ export default function Page() {
               )}
             >
               <RulesIcon className="h-4 w-4 lg:h-5 lg:w-5" />
-              Rulebook TWI Season 7
+              Check Rulebook
             </a>
 
             {/* 3. TOMBOL REGISTRASI (Outline Transparan) */}
