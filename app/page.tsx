@@ -98,6 +98,7 @@ export default function Page() {
               className={cn(
                 buttonVariants({ size: "lg", variant: "outline" }),
                 "h-11 w-full gap-2 border-border/50 bg-transparent px-6 text-sm font-semibold text-foreground hover:bg-accent hover:text-accent-foreground lg:h-12 lg:w-auto lg:gap-2.5 lg:text-base [&_svg:not([class*='size-'])]:size-4 lg:[&_svg:not([class*='size-'])]:size-5",
+                // "h-11 w-full gap-2 border-border/50 bg-transparent px-6 text-sm font-semibold text-foreground hover:bg-accent hover:text-accent-foreground lg:h-12 lg:w-auto lg:gap-2.5 lg:text-base [&_svg:not([class*='size-'])]:size-4 lg:[&_svg:not([class*='size-'])]:size-5",
               )}
             >
               <RulesIcon className="h-4 w-4 lg:h-5 lg:w-5" />
