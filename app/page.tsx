@@ -64,7 +64,7 @@ export default function Page() {
           </div>
 
           {/* Area Tombol */}
-          <div className="mt-6 flex w-full max-w-4xl flex-col items-center gap-2.5 lg:mt-10 lg:flex-row lg:justify-center">
+          <div className="mt-8 flex w-full max-w-4xl flex-col items-center gap-2.5 lg:mt-10 lg:flex-row lg:justify-center">
             
             {/* 1. TOMBOL REGISTRASI (Warna Merah Crimson + Glow) -> Aksi Utama */}
             <a
