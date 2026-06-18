@@ -541,7 +541,7 @@ export function RegistrationForm() {
                 onClick={(e) => e.stopPropagation()}
                 className="font-medium text-primary underline underline-offset-2 hover:opacity-80"
               >
-                Rulebook TWI Season 7
+                rulebook
               </a>{" "}
               turnamen Team Wars Indonesia.
             </span>
@@ -560,13 +560,6 @@ export function RegistrationForm() {
           >
             Review Data
           </button>
-
-          {!canSubmit && (
-            <p className="mt-3 text-center text-xs text-muted-foreground">
-              Lengkapi seluruh kolom dengan benar (email, hex, 1 Ketua, 1 Wakil Ketua,
-              tanpa data ganda, dan setujui Rulebook) untuk melanjutkan.
-            </p>
-          )}
         </section>
       </form>
 
