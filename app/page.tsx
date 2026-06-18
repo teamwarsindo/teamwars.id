@@ -63,7 +63,7 @@ export default function Page() {
           </div>
 
           {/* CTAs - Ditambahkan flex-wrap agar 3 tombol tidak rusak di layar nanggung */}
-          <div className="mb-8 mt-6 flex w-full max-w-md flex-col items-center gap-3 sm:flex-row sm:flex-wrap sm:justify-center">
+          <div className="mt-6 flex w-full max-w-md flex-col items-center gap-3 sm:flex-row sm:flex-wrap sm:justify-center">
             <a
               href={DISCORD_URL}
               target="_blank"
