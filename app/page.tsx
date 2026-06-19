@@ -65,44 +65,49 @@ export default function Page() {
           {/* Area Tombol */}
           <div className="mt-8 flex w-full max-w-4xl flex-col items-center gap-2.5 lg:mt-10 lg:flex-row lg:justify-center">
             
-            {/* 1. TOMBOL REGISTRASI (Warna Merah Crimson + Glow) -> Aksi Utama */}
+            {/* 1. TOMBOL REGISTRASI (Dikunci Merah) */}
             <a
               href="/registration"
               className={cn(
                 buttonVariants({ size: "lg" }),
-                "h-11 w-full gap-2 whitespace-nowrap bg-red-600 px-4 text-white shadow-[0_0_30px_-6px_rgba(220,38,38,0.5)] hover:bg-red-700 hover:text-white sm:px-6 lg:h-12 lg:w-auto lg:gap-2.5 lg:text-base [&_svg:not([class*='size-'])]:size-4 lg:[&_svg:not([class*='size-'])]:size-5 dark:bg-red-600 dark:text-white dark:shadow-[0_0_30px_-6px_rgba(220,38,38,0.5)] dark:hover:bg-red-700 dark:hover:text-white"
+                "h-11 w-full gap-2 whitespace-nowrap px-4 sm:px-6 lg:h-12 lg:w-auto lg:gap-2.5 lg:text-base [&_svg:not([class*='size-'])]:size-4 lg:[&_svg:not([class*='size-'])]:size-5",
+                // Warna dikunci paksa dengan !
+                "!bg-red-600 !text-white hover:!bg-red-700 shadow-[0_0_30px_-6px_rgba(220,38,38,0.5)] dark:!bg-red-600 dark:!text-white dark:hover:!bg-red-700"
               )}
             >
               <FormIcon className="h-4 w-4 lg:h-5 lg:w-5" />
               Team Registration
             </a>
 
-            {/* 2. TOMBOL DISCORD (Warna Biru Khas Discord + Glow) -> Aksi Merek */}
+            {/* 2. TOMBOL DISCORD (Dikunci Biru Discord) */}
             <a
               href="/invite"
-              target="_blank"
-              rel="noopener noreferrer"
               className={cn(
                 buttonVariants({ size: "lg" }),
-                "h-11 w-full gap-2 whitespace-nowrap bg-[#5865F2] px-4 text-white shadow-[0_0_30px_-6px_rgba(88,101,242,0.5)] hover:bg-[#4752c4] hover:text-white sm:px-6 lg:h-12 lg:w-auto lg:gap-2.5 lg:text-base [&_svg:not([class*='size-'])]:size-4 lg:[&_svg:not([class*='size-'])]:size-5 dark:bg-[#5865F2] dark:text-white dark:shadow-[0_0_30px_-6px_rgba(88,101,242,0.5)] dark:hover:bg-[#4752c4] dark:hover:text-white"
+                "h-11 w-full gap-2 whitespace-nowrap px-4 sm:px-6 lg:h-12 lg:w-auto lg:gap-2.5 lg:text-base [&_svg:not([class*='size-'])]:size-4 lg:[&_svg:not([class*='size-'])]:size-5",
+                // Warna dikunci paksa dengan !
+                "!bg-[#5865F2] !text-white hover:!bg-[#4752c4] shadow-[0_0_30px_-6px_rgba(88,101,242,0.5)] dark:!bg-[#5865F2] dark:!text-white dark:hover:!bg-[#4752c4]"
               )}
             >
               <DiscordIcon className="h-4 w-4 lg:h-5 lg:w-5" />
               Join the Discord
             </a>
 
-            {/* 3. TOMBOL RULEBOOK (Outline Transparan) -> Aksi Sekunder */}
+            {/* 3. TOMBOL RULEBOOK (Dikunci Abu Gelap & Putih) */}
             <a
               href="/rules"
               className={cn(
-                buttonVariants({ size: "lg", variant: "outline" }),
-               "h-11 w-full gap-2 whitespace-nowrap bg-gray-800 px-4 text-white shadow-[0_0_30px_-6px_rgba(31,41,55,0.5)] hover:bg-gray-900 hover:text-white sm:px-6 lg:h-12 lg:w-auto lg:gap-2.5 lg:text-base [&_svg:not([class*='size-'])]:size-4 lg:[&_svg:not([class*='size-'])]:size-5 dark:bg-white dark:text-black dark:shadow-[0_0_30px_-6px_rgba(255,255,255,0.5)] dark:hover:bg-gray-200 dark:hover:text-black"
+                buttonVariants({ size: "lg" }),
+                "h-11 w-full gap-2 whitespace-nowrap px-4 sm:px-6 lg:h-12 lg:w-auto lg:gap-2.5 lg:text-base [&_svg:not([class*='size-'])]:size-4 lg:[&_svg:not([class*='size-'])]:size-5",
+                // LIGHT MODE: Dikunci abu-abu gelap, teks putih (tidak bisa jadi hitam saat di-hover)
+                "!bg-gray-800 !text-white hover:!bg-gray-900 shadow-[0_0_30px_-6px_rgba(31,41,55,0.5)]",
+                // DARK MODE: Dikunci putih, teks hitam
+                "dark:!bg-white dark:!text-black dark:hover:!bg-gray-200 dark:!shadow-[0_0_30px_-6px_rgba(255,255,255,0.5)]"
               )}
             >
               <RulesIcon className="h-4 w-4 lg:h-5 lg:w-5" />
               Check Rulebook
             </a>
-
           </div>
         </section>
 
