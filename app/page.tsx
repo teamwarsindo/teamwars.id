@@ -7,7 +7,6 @@ import { ShieldIcon, DiscordIcon, RulesIcon, FormIcon } from "@/components/icons
 
 // Launch target — silakan ganti dengan tanggal asli turnamen.
 const LAUNCH_TARGET = new Date("2026-07-01T08:00:00+07:00").getTime()
-const DISCORD_URL = "https://discord.gg/hTJJRevA43"
 
 export default function Page() {
   return (
@@ -68,10 +67,10 @@ export default function Page() {
             
             {/* 1. TOMBOL REGISTRASI (Warna Merah Crimson + Glow) -> Aksi Utama */}
             <a
-              href="#"
+              href="/registration"
               className={cn(
                 buttonVariants({ size: "lg" }),
-                "h-11 w-full gap-2 bg-[#DC2626] px-6 text-sm font-bold text-white shadow-[0_0_30px_-6px_#DC2626] hover:bg-[#B91C1C] lg:h-12 lg:w-auto lg:text-base lg:gap-2.5 [&_svg:not([class*='size-'])]:size-4 lg:[&_svg:not([class*='size-'])]:size-5",
+                "h-11 w-full gap-2 whitespace-nowrap bg-red-600 px-4 text-white shadow-[0_0_30px_-6px_rgba(220,38,38,0.5)] hover:bg-red-700 hover:text-white sm:px-6 lg:h-12 lg:w-auto lg:gap-2.5 lg:text-base [&_svg:not([class*='size-'])]:size-4 lg:[&_svg:not([class*='size-'])]:size-5 dark:bg-red-600 dark:text-white dark:shadow-[0_0_30px_-6px_rgba(220,38,38,0.5)] dark:hover:bg-red-700 dark:hover:text-white"
               )}
             >
               <FormIcon className="h-4 w-4 lg:h-5 lg:w-5" />
@@ -80,12 +79,12 @@ export default function Page() {
 
             {/* 2. TOMBOL DISCORD (Warna Biru Khas Discord + Glow) -> Aksi Merek */}
             <a
-              href={DISCORD_URL}
+              href="/invite"
               target="_blank"
               rel="noopener noreferrer"
               className={cn(
                 buttonVariants({ size: "lg" }),
-                "h-11 w-full gap-2 bg-[#5865F2] px-6 text-sm font-bold text-white shadow-[0_0_30px_-6px_#5865F2] hover:bg-[#4752c4] lg:h-12 lg:w-auto lg:text-base lg:gap-2.5 [&_svg:not([class*='size-'])]:size-4 lg:[&_svg:not([class*='size-'])]:size-5",
+                "h-11 w-full gap-2 whitespace-nowrap bg-[#5865F2] px-4 text-white shadow-[0_0_30px_-6px_rgba(88,101,242,0.5)] hover:bg-[#4752c4] hover:text-white sm:px-6 lg:h-12 lg:w-auto lg:gap-2.5 lg:text-base [&_svg:not([class*='size-'])]:size-4 lg:[&_svg:not([class*='size-'])]:size-5 dark:bg-[#5865F2] dark:text-white dark:shadow-[0_0_30px_-6px_rgba(88,101,242,0.5)] dark:hover:bg-[#4752c4] dark:hover:text-white"
               )}
             >
               <DiscordIcon className="h-4 w-4 lg:h-5 lg:w-5" />
@@ -97,8 +96,7 @@ export default function Page() {
               href="/rules"
               className={cn(
                 buttonVariants({ size: "lg", variant: "outline" }),
-               "h-11 w-full gap-2 whitespace-nowrap bg-gray-800 px-4 text-white shadow-[0_0_30px_-6px_rgba(31,41,55,0.5)] hover:bg-gray-900 sm:px-6 lg:h-12 lg:w-auto lg:gap-2.5 lg:text-base [&_svg:not([class*='size-'])]:size-4 lg:[&_svg:not([class*='size-'])]:size-5 dark:bg-white dark:text-black dark:shadow-[0_0_30px_-6px_rgba(255,255,255,0.5)] dark:hover:bg-gray-200",
-                // "h-11 w-full gap-2 border-border/50 bg-transparent px-6 text-sm font-semibold text-foreground hover:bg-accent hover:text-accent-foreground lg:h-12 lg:w-auto lg:gap-2.5 lg:text-base [&_svg:not([class*='size-'])]:size-4 lg:[&_svg:not([class*='size-'])]:size-5",
+               "h-11 w-full gap-2 whitespace-nowrap bg-gray-800 px-4 text-white shadow-[0_0_30px_-6px_rgba(31,41,55,0.5)] hover:bg-gray-900 hover:text-white sm:px-6 lg:h-12 lg:w-auto lg:gap-2.5 lg:text-base [&_svg:not([class*='size-'])]:size-4 lg:[&_svg:not([class*='size-'])]:size-5 dark:bg-white dark:text-black dark:shadow-[0_0_30px_-6px_rgba(255,255,255,0.5)] dark:hover:bg-gray-200 dark:hover:text-black"
               )}
             >
               <RulesIcon className="h-4 w-4 lg:h-5 lg:w-5" />
