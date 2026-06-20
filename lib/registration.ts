@@ -127,10 +127,16 @@ export function compressImage(file: File, maxWidth = 1200): Promise<string> {
   })
 }
 
-let idCounter = 0
+// Ganti bagian idCounter di lib/registration.ts
 export function createPlayer(role: RosterRole): Player {
-  idCounter += 1
-  return { id: `player-${Date.now()}-${idCounter}`, role, namaLengkap: "", discord: "", ign: "", duelId: "" }
+  return { 
+    id: crypto.randomUUID(), // Jauh lebih aman dan unik
+    role, 
+    namaLengkap: "", 
+    discord: "", 
+    ign: "", 
+    duelId: "" 
+  }
 }
 
 export function defaultPlayers(): Player[] {
