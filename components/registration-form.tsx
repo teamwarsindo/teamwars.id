@@ -27,6 +27,7 @@ import {
   sanitizeRealName,
   toProperCase,
   validateRealName,
+  validateTeamName,
   sanitizeDiscord,
   validateDiscord,
 } from "@/lib/registration"
