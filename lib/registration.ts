@@ -86,9 +86,18 @@ export function toProperCase(value: string): string {
     .join(" ")
 }
 
+export function validateTeamName(value: string): string | undefined {
+  const v = value.trim()
+  if (!v) return undefined
+  if (v.length < 3) return "Minimal 3 karakter."
+  if (v.startsWith(".") || v.endsWith(".")) return "Tidak boleh diawali/diakhiri titik."
+  return undefined
+}
+
 export function validateRealName(value: string): string | undefined {
   const v = value.trim()
   if (!v) return undefined
+  if (v.length < 3) return "Minimal 3 karakter."
   if (v.length > 60) return "Maksimal 60 karakter."
   return undefined
 }
