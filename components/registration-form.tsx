@@ -236,7 +236,20 @@ export function RegistrationForm() {
             <div>
               <label htmlFor="hexText" className="mb-1.5 block text-sm font-medium text-foreground">Warna Identitas Tim (Hex)</label>
               <div className="flex items-center gap-3">
-                <input type="color" value={isValidHex(hex) ? hex : "#000000"} onChange={(e) => setHex(e.target.value)} className="h-11 w-12 shrink-0 cursor-pointer rounded-lg border border-border bg-background p-1" />
+                {/* Kotak warna melengkung yang presisi */}
+                <div
+                  className="relative h-11 w-12 shrink-0 overflow-hidden rounded-lg border border-border shadow-sm transition-colors focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary"
+                  style={{ backgroundColor: isValidHex(hex) ? hex : "#000000" }}
+                >
+                  {/* Input warna asli yang dibuat transparan agar bisa diklik */}
+                  <input
+                    type="color"
+                    value={isValidHex(hex) ? hex : "#000000"}
+                    onChange={(e) => setHex(e.target.value)}
+                    className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
+                  />
+                </div>
+                
                 <input id="hexText" type="text" value={hex} onChange={(e) => setHex(`#${e.target.value.replace(/[^0-9a-fA-F]/g, "").slice(0, 6)}`)} onBlur={() => markTouched("hex")} className={`${inputBase} font-mono ${err("hex") ? "border-destructive" : "border-border"}`} />
               </div>
               <ErrorText msg={err("hex")} />
