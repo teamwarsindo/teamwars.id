@@ -7,9 +7,6 @@ export const MAX_FILE_SIZE = 5 * 1024 * 1024
 export const STORAGE_KEY = "twi-s7-duel-links-draft"
 export const RULEBOOK_URL = "https://twindo.dev"
 
-// URL Google Apps Script milikmu kembali bertugas!
-export const SUBMIT_URL = "https://script.google.com/macros/s/AKfycbyzyvztXxyLs2SxmcgkeBKftV1au9UOfegt868ShaIQiV63XWkYy_D18AVmNOz5yKIf/exec"
-
 export interface Player {
   id: string
   role: RosterRole
