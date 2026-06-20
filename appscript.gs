@@ -1,5 +1,5 @@
 // ==========================================
-// BACK-END: TEAM WARS INDONESIA SEASON 7
+// BACK-END: TEAM WARS INDONESIA
 // ==========================================
 // Konfigurasi ID Google
 const SHEET_ID = "1HbfBnE02sJ1R5iwEgP5ooakqHeyXq-Kk9MGP3X78964";
