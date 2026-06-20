@@ -110,7 +110,11 @@ export function RegistrationForm() {
     if (!email.trim()) errs.email = "Kolom ini wajib diisi."
     else if (!isValidEmail(email)) errs.email = "Format email tidak valid."
     
-    if (!namaTim.trim()) errs.namaTim = "Kolom ini wajib diisi."
+    // Tambahkan validasi tim yang baru
+    const teamErr = validateTeamName(namaTim)
+    if (teamErr) errs.namaTim = teamErr
+    else if (!namaTim.trim()) errs.namaTim = "Kolom ini wajib diisi."
+    
     if (!isValidHex(hex)) errs.hex = "Format hex tidak valid (#RRGGBB)."
     if (!logo) errs.logo = "Logo tim wajib diunggah."
     if (!bukti) errs.bukti = "Bukti transfer wajib diunggah."
@@ -225,7 +229,7 @@ export function RegistrationForm() {
           <div className="flex flex-col gap-4">
             <div>
               <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-foreground">Email Aktif Perwakilan</label>
-              <input id="email" type="email" value={email} onChange={(e) => setEmail(e.target.value)} onBlur={() => markTouched("email")} className={`${inputBase} ${err("email") ? "border-destructive" : "border-border"}`} />
+              <input id="email" type="email" value={email} onChange={(e) => { setEmail(e.target.value); markTouched("email"); }} onBlur={() => markTouched("email")} className={`${inputBase} ${err("email") ? "border-destructive" : "border-border"}`} />
               <ErrorText msg={err("email")} />
             </div>
             <div>
