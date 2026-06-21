@@ -60,7 +60,11 @@ export default function Page() {
           </p>
           
           {/* INFO PEMBAYARAN DENGAN GAYA INVOICE */}
-          <div className="mt-8 w-full max-w-md overflow-hidden rounded-xl border border-primary/20 bg-card shadow-lg backdrop-blur-sm">
+          <div className="relative mt-8 w-full max-w-md overflow-hidden rounded-xl border border-primary/50 bg-card shadow-[0_0_15px_rgba(59,130,246,0.15)] backdrop-blur-sm">
+            
+            {/* Aksen garis biru vertikal di sisi kiri agar persis seperti elemen form di bawahnya */}
+            <div className="absolute bottom-0 left-0 top-0 w-1.5 bg-primary z-10"></div>
+
             {/* Bagian Atas: Nominal */}
             <div className="border-b border-border bg-muted/30 p-5 text-center sm:p-6">
               <p className="mb-1 text-xs font-medium uppercase tracking-wider text-muted-foreground">
@@ -85,13 +89,13 @@ export default function Page() {
               </div>
 
               {/* Area Nomor Rekening & Copy Button */}
-              <div className="mt-5 flex items-center justify-between rounded-lg border border-primary/10 bg-primary/5 p-3">
+              <div className="mt-5 flex items-center justify-between rounded-lg border border-primary/30 bg-primary/10 p-3">
                 <span className="font-mono text-lg font-bold tracking-widest text-foreground">
                   {accountNumber}
                 </span>
                 <button
                   onClick={handleCopy}
-                  className="flex items-center justify-center rounded-md bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground shadow-sm transition-all hover:bg-primary/90 active:scale-95"
+                  className="flex items-center justify-center rounded-md bg-primary px-3 py-1.5 text-xs font-bold text-primary-foreground shadow-sm transition-all hover:bg-primary/90 hover:shadow-[0_0_10px_rgba(59,130,246,0.5)] active:scale-95"
                   title="Salin nomor rekening"
                 >
                   {isCopied ? "Tersalin! ✓" : "Salin 📋"}
