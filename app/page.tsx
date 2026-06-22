@@ -1,3 +1,6 @@
+"use client" // Wajib ditambahkan agar bisa menggunakan State & Effect
+
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import { cn } from "@/lib/utils"
 import { Countdown } from "@/components/countdown"
@@ -5,10 +8,30 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { buttonVariants } from "@/components/ui/button"
 import { ShieldIcon, DiscordIcon, RulesIcon, FormIcon } from "@/components/icons"
 
-// Launch target — silakan ganti dengan tanggal asli turnamen.
+// Launch target — menggunakan target waktu asli
 const LAUNCH_TARGET = new Date("2026-07-01T08:00:00+07:00").getTime()
 
 export default function Page() {
+  // 1. State untuk mengontrol status tombol pendaftaran
+  const [isOpen, setIsOpen] = useState(false)
+
+  // 2. Logika Pengecekan Waktu Otomatis
+  useEffect(() => {
+    const checkTime = () => {
+      const now = new Date().getTime()
+      setIsOpen(now >= LAUNCH_TARGET) // Akan bernilai true jika waktu sekarang sudah melewati target
+    }
+
+    // Cek langsung saat halaman dimuat
+    checkTime()
+
+    // Cek secara berkala setiap 1 detik
+    const intervalId = setInterval(checkTime, 1000)
+
+    // Pembersihan memori
+    return () => clearInterval(intervalId)
+  }, [])
+
   return (
     <main className="relative flex min-h-[100dvh] flex-col overflow-hidden bg-background text-foreground">
       
@@ -18,8 +41,7 @@ export default function Page() {
         aria-hidden="true"
       />
 
-      {/* TOP BAR - Dilepas pagar pembatasnya agar full merentang ke ujung layar PC */}
-      {/* Menggunakan lg:px-12 agar jarak dari tepi layar tetap terlihat elegan di monitor besar */}
+      {/* TOP BAR */}
       <div className="relative z-10 flex w-full items-center justify-between px-6 pt-6 lg:px-12">
         <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
           <ShieldIcon className="h-4 w-4 text-primary" />
@@ -28,7 +50,7 @@ export default function Page() {
         <ThemeToggle />
       </div>
 
-      {/* MAIN CONTENT - Tetap Rata Tengah namun dibiarkan berada di kanvas Full-Width */}
+      {/* MAIN CONTENT */}
       <div className="relative z-10 flex w-full flex-1 flex-col items-center justify-center px-4 pb-4 sm:px-6">
         
         {/* HEADER */}
@@ -42,7 +64,6 @@ export default function Page() {
               className="scale-[1.01] object-cover" 
             />
           </div>
-          {/* Fluid Typography untuk layarnya yang kini Full-Width */}
           <h1 className="glow-text text-balance text-3xl font-extrabold tracking-tight sm:text-5xl lg:text-[clamp(3.5rem,5vw,5.5rem)] lg:leading-[1.1]">
             TEAM WARS INDONESIA
           </h1>
@@ -65,18 +86,27 @@ export default function Page() {
           {/* Area Tombol */}
           <div className="mt-8 flex w-full max-w-4xl flex-col items-center gap-2.5 lg:mt-10 lg:flex-row lg:justify-center">
             
-            {/* 1. TOMBOL REGISTRASI (Dikunci Merah) */}
+            {/* 1. TOMBOL REGISTRASI (Dinamis berdasarkan Countdown) */}
             <a
-              href="/registration"
+              // Jika isOpen true, arahkan ke /registration. Jika false, hapus href.
+              href={isOpen ? "/registration" : undefined}
+              // Cegah klik paksa jika status masih tertutup
+              onClick={(e) => {
+                if (!isOpen) e.preventDefault();
+              }}
+              aria-disabled={!isOpen}
               className={cn(
                 buttonVariants({ size: "lg" }),
-                "h-11 w-full gap-2 whitespace-nowrap px-4 sm:px-6 lg:h-12 lg:w-auto lg:gap-2.5 lg:text-base [&_svg:not([class*='size-'])]:size-4 lg:[&_svg:not([class*='size-'])]:size-5",
-                // Warna dikunci paksa dengan !
-                "!bg-red-600 !text-white hover:!bg-red-700 shadow-[0_0_30px_-6px_rgba(220,38,38,0.5)] dark:!bg-red-600 dark:!text-white dark:hover:!bg-red-700"
+                "h-11 w-full gap-2 whitespace-nowrap px-4 sm:px-6 lg:h-12 lg:w-auto lg:gap-2.5 lg:text-base [&_svg:not([class*='size-'])]:size-4 lg:[&_svg:not([class*='size-'])]:size-5 transition-all duration-300",
+                // Warna asli (Merah)
+                "!bg-red-600 !text-white hover:!bg-red-700 shadow-[0_0_30px_-6px_rgba(220,38,38,0.5)] dark:!bg-red-600 dark:!text-white dark:hover:!bg-red-700",
+                // Jika ditutup, tambahkan efek mati (menimpa efek hover)
+                !isOpen && "opacity-50 cursor-not-allowed !pointer-events-none"
               )}
             >
               <FormIcon className="h-4 w-4 lg:h-5 lg:w-5" />
-              Team Registration
+              {/* Teks berubah otomatis */}
+              {isOpen ? "Team Registration" : "Registration Closed"}
             </a>
 
             {/* 2. TOMBOL DISCORD (Dikunci Biru Discord) */}
@@ -85,7 +115,6 @@ export default function Page() {
               className={cn(
                 buttonVariants({ size: "lg" }),
                 "h-11 w-full gap-2 whitespace-nowrap px-4 sm:px-6 lg:h-12 lg:w-auto lg:gap-2.5 lg:text-base [&_svg:not([class*='size-'])]:size-4 lg:[&_svg:not([class*='size-'])]:size-5",
-                // Warna dikunci paksa dengan !
                 "!bg-[#5865F2] !text-white hover:!bg-[#4752c4] shadow-[0_0_30px_-6px_rgba(88,101,242,0.5)] dark:!bg-[#5865F2] dark:!text-white dark:hover:!bg-[#4752c4]"
               )}
             >
@@ -99,9 +128,7 @@ export default function Page() {
               className={cn(
                 buttonVariants({ size: "lg" }),
                 "h-11 w-full gap-2 whitespace-nowrap px-4 sm:px-6 lg:h-12 lg:w-auto lg:gap-2.5 lg:text-base [&_svg:not([class*='size-'])]:size-4 lg:[&_svg:not([class*='size-'])]:size-5",
-                // LIGHT MODE: Dikunci abu-abu gelap, teks putih (tidak bisa jadi hitam saat di-hover)
                 "!bg-gray-800 !text-white hover:!bg-gray-900 shadow-[0_0_30px_-6px_rgba(31,41,55,0.5)]",
-                // DARK MODE: Dikunci putih, teks hitam
                 "dark:!bg-white dark:!text-black dark:hover:!bg-gray-200 dark:!shadow-[0_0_30px_-6px_rgba(255,255,255,0.5)]"
               )}
             >
