@@ -45,7 +45,8 @@ export function RegistrationForm() {
   const [players, setPlayers] = useState<Player[]>(defaultPlayers)
   const [logo, setLogo] = useState<UploadedFile | null>(null)
   const [bukti, setBukti] = useState<UploadedFile | null>(null)
-  const [agreed, setAgreed] = useState(false)
+  const [agreedData, setAgreedData] = useState(false)
+  const [agreedRules, setAgreedRules] = useState(false)
 
   const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>({})
   const [submitAttempted, setSubmitAttempted] = useState(false)
@@ -329,22 +330,49 @@ export function RegistrationForm() {
           </button>
         </section>
 
-        <section className="flex flex-col gap-4 pt-2">
-          <label className="flex items-start gap-3 cursor-pointer rounded-xl border border-border bg-card p-4 transition-colors hover:bg-muted/50">
-            <input 
-              type="checkbox" 
-              checked={agreed} 
-              onChange={(e) => setAgreed(e.target.checked)}
-              className="mt-1 h-4 w-4 shrink-0 rounded border-primary bg-background text-primary focus:ring-primary focus:ring-offset-background"
-            />
-            <span className="text-sm text-muted-foreground">
-              Saya mewakili tim menyatakan bahwa seluruh data yang diisi adalah benar, asli, dan valid. Kami menyetujui seluruh syarat dan ketentuan yang tertulis di dalam <a href="/rules" target="_blank" rel="noopener noreferrer" className="font-semibold text-primary hover:underline">Rulebook Resmi Team Wars</a>.
-            </span>
-          </label>
+          {/* SECTION PERSETUJUAN (Disamakan dengan Section Roster) */}
+        <section className="glass glow-border rounded-2xl border p-5 sm:p-6">
+          {/* Pembungkus internal untuk mengatur susunan checklist agar rapi */}
+          <div className="space-y-4">
+            
+            {/* Checklist 1: Kebenaran Data */}
+            <label className="flex items-start gap-3 cursor-pointer rounded-xl border border-border bg-card p-4 transition-colors hover:bg-muted/50">
+              <input 
+                type="checkbox" 
+                checked={agreedData} 
+                onChange={(e) => setAgreedData(e.target.checked)}
+                className="mt-1 h-4 w-4 shrink-0 rounded border-primary bg-background text-primary focus:ring-primary focus:ring-offset-background"
+              />
+              <span className="text-sm text-muted-foreground">
+                Saya mewakili tim menyatakan bahwa seluruh data yang diisi adalah benar, asli, dan valid.
+              </span>
+            </label>
 
-          <button type="button" onClick={handleReviewClick} className="w-full rounded-xl bg-primary py-4 text-base font-bold text-primary-foreground shadow-lg transition-all hover:brightness-110 active:scale-[0.98]">
-            Tinjau Data Pendaftaran
-          </button>
+            {/* Checklist 2: Persetujuan Rulebook */}
+            <label className="flex items-start gap-3 cursor-pointer rounded-xl border border-border bg-card p-4 transition-colors hover:bg-muted/50">
+              <input 
+                type="checkbox" 
+                checked={agreedRules} 
+                onChange={(e) => setAgreedRules(e.target.checked)}
+                className="mt-1 h-4 w-4 shrink-0 rounded border-primary bg-background text-primary focus:ring-primary focus:ring-offset-background"
+              />
+              <span className="text-sm text-muted-foreground">
+                Kami menyetujui seluruh syarat dan ketentuan yang tertulis di dalam <a href="/rules" target="_blank" rel="noopener noreferrer" className="font-semibold text-primary hover:underline">Rulebook Resmi Team Wars</a>.
+              </span>
+            </label>
+
+            {/* Tombol Review */}
+            <button 
+              type="button" 
+              onClick={handleReviewClick} 
+              // Tombol terkunci jika salah satu atau kedua checklist belum dicentang
+              disabled={!agreedData || !agreedRules} 
+              // Desain tombol otomatis menyesuaikan status aktif/nonaktif
+              className="w-full rounded-xl bg-primary py-4 text-base font-bold text-primary-foreground shadow-lg transition-all hover:brightness-110 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:brightness-100 disabled:active:scale-100 mt-2"
+            >
+              Review Pendaftaran
+            </button>
+          </div>
         </section>
       </form>
 
