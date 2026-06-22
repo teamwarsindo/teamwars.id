@@ -137,8 +137,8 @@ export function RegistrationForm() {
   }, [email, namaTim, hex, logo, bukti, players, duplicateFields])
 
   const hasFieldErrors = Object.keys(fieldErrors).length > 0
-  const canSubmit = !hasFieldErrors && rosterRuleOk && agreed
-
+const canSubmit = !hasFieldErrors && rosterRuleOk && agreedData && agreedRules
+  
   function err(key: string) {
     const e = fieldErrors[key]
     if (!e) return undefined
