@@ -12,9 +12,19 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Team Wars Indonesia',
     description: 'Official Rulebook & Guidelines - Baca peraturan lengkap sebelum kalian kena sanksi.',
-    // Jika Anda punya gambar khusus untuk halaman rules, bisa dimasukkan di sini.
-    // Jika tidak ditulis, ia akan otomatis memakai logo dari layout.tsx
-    // images: [{ url: '/rules-banner.png', width: 1200, height: 630 }],
+    url: 'https://teamwars.web.id/rules',
+    siteName: 'Team Wars Indonesia',
+    images: [
+      {
+        // Sesuaikan dengan nama gambar PNG/JPG Anda di folder public/
+        url: '/opengraph-image.jpg', 
+        width: 1200, // Opsional, tapi disarankan
+        height: 630, // Opsional, tapi disarankan
+        alt: 'Team Wars Indonesia Logo',
+      },
+    ],
+    locale: 'id_ID',
+    type: 'website',
   },
 }
 
