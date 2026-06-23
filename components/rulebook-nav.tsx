@@ -1,7 +1,7 @@
 'use client'
 
-import { ShieldIcon } from "@/components/icons"
-  import { navItems } from '@/lib/rules-data'
+import { ShieldIcon } from '@/components/icons'
+import { navItems } from '@/lib/rules-data'
 
 export function RulebookNav() {
   function handleJump(e: React.MouseEvent<HTMLAnchorElement>, id: string) {
