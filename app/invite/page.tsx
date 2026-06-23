@@ -11,7 +11,7 @@ export const metadata: Metadata = {
     description: 'Official Discord - Masuk ke server Discord resmi Team Wars Indonesia untuk mencari tim, bertanya ke panitia, dan mendapatkan info terbaru.',
     images: [
       {
-        url: '/opengraph-image.jpg', // Logo Anda akan muncul di sini!
+        url: '/logo-dc.png', // Logo Anda akan muncul di sini!
         width: 1200,
         height: 630,
         alt: 'Team Wars Indonesia Discord',
