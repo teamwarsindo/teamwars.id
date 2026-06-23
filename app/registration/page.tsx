@@ -4,7 +4,8 @@ import { useState } from "react";
 import Image from "next/image"
 import { RegistrationForm } from "@/components/registration-form"
 import { ThemeToggle } from "@/components/theme-toggle"
-import { ShieldIcon } from "@/components/icons"
+// Impor TrashIcon langsung dari komponen ikon kustom kita
+import { ShieldIcon, DiscordIcon, RulesIcon, FormIcon, TrashIcon } from "@/components/icons"
 
 export default function Page() {
   const [isCopied, setIsCopied] = useState(false);
@@ -20,6 +21,14 @@ export default function Page() {
     }
   };
 
+  const handleClearStorage = () => {
+    const yakin = window.confirm("Apakah Anda yakin ingin menghapus semua data pendaftaran yang tersimpan di browser ini?");
+    if (yakin) {
+      localStorage.clear();
+      window.location.reload();
+    }
+  };
+
   return (
     <main className="relative flex min-h-[100dvh] flex-col overflow-x-hidden bg-background text-foreground">
       
@@ -29,19 +38,32 @@ export default function Page() {
         aria-hidden="true"
       />
 
-      {/* TOP BAR: Merentang Full-Width seperti Landing Page */}
+      {/* TOP BAR */}
       <div className="relative z-10 flex w-full items-center justify-between px-6 pt-6 lg:px-12">
         <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-muted-foreground">
           <ShieldIcon className="h-4 w-4 text-primary" />
           Official Registration
         </div>
-        <ThemeToggle />
+        
+        {/* Kontainer Tombol Aksi */}
+        <div className="flex items-center gap-1">
+          <button
+            type="button"
+            onClick={handleClearStorage}
+            className="inline-flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground hover:bg-muted hover:text-destructive transition-colors"
+            title="Hapus data tersimpan & reset form"
+          >
+            {/* Menggunakan ikon kustom manual */}
+            <TrashIcon className="h-5 w-5" />
+          </button>
+          <ThemeToggle />
+        </div>
       </div>
 
-      {/* MAIN CONTENT WRAPPER: Full-Width kanvas, elemen rata tengah (items-center) */}
+      {/* MAIN CONTENT WRAPPER */}
       <div className="relative z-10 flex w-full flex-1 flex-col items-center px-4 pb-6 pt-6 sm:px-6">
         
-        {/* HEADER: Dibuat megah dengan Fluid Typography sama seperti Landing Page */}
+        {/* HEADER */}
         <header className="mb-10 flex w-full flex-col items-center text-center lg:mb-12">
           <div className="glow-border relative mb-6 h-[120px] w-[120px] overflow-hidden rounded-2xl">
             <Image
@@ -106,12 +128,12 @@ export default function Page() {
           </section>
         </header>
 
-        {/* AREA FORM: Dibatasi max-w-2xl agar tidak melar di layar PC yang lebar */}
+        {/* AREA FORM */}
         <div className="w-full max-w-2xl">
           <RegistrationForm />
         </div>
 
-        {/* FOOTER: mt-auto akan mendorong footer ke ujung bawah layar atau di bawah form */}
+        {/* FOOTER */}
         <footer className="mt-auto pt-10 text-center text-[10px] text-muted-foreground sm:pt-16 sm:text-xs">
           © {new Date().getFullYear()} Team Wars Indonesia. All rights reserved.
         </footer>
