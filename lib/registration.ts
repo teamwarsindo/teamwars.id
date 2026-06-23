@@ -28,80 +28,7 @@ export interface FormState {
   players: Player[]
 }
 
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-
-export function isValidEmail(value: string): boolean {
-  return EMAIL_REGEX.test(value.trim())
-}
-
-export function isValidHex(value: string): boolean {
-  return /^#[0-9a-fA-F]{6}$/.test(value.trim())
-}
-
-export function formatDuelId(value: string): string {
-  const digits = value.replace(/\D/g, "").slice(0, 9)
-  const parts: string[] = []
-  for (let i = 0; i < digits.length; i += 3) {
-    parts.push(digits.slice(i, i + 3))
-  }
-  return parts.join("-")
-}
-
-export function isCompleteDuelId(value: string): boolean {
-  return /^\d{3}-\d{3}-\d{3}$/.test(value)
-}
-
-export function normalizeSpaces(value: string): string {
-  return value.replace(/\s+/g, " ").trim()
-}
-
-export function sanitizeTeamName(value: string): string {
-  return value.replace(/[^a-zA-Z0-9 .'-]/g, "")
-}
-
-export function sanitizeDiscord(value: string): string {
-  return value.toLowerCase().replace(/[^a-z0-9_.]/g, "").slice(0, 32)
-}
-
-export function validateDiscord(value: string): string | undefined {
-  const v = value.trim()
-  if (!v) return undefined
-  if (v.length < 2) return "Minimal 2 karakter."
-  if (v.length > 32) return "Maksimal 32 karakter."
-  if (v.includes("..")) return "Tidak boleh ada titik berurutan (..)."
-  if (v.startsWith(".") || v.endsWith(".")) return "Tidak boleh diawali/diakhiri titik."
-  if (!/^[a-z0-9_.]+$/.test(v)) return "Hanya huruf kecil, angka, _, dan ."
-  return undefined
-}
-
-export function sanitizeRealName(value: string): string {
-  return value.replace(/[^a-zA-Z\s'-]/g, "").slice(0, 60)
-}
-
-export function toProperCase(value: string): string {
-  return normalizeSpaces(value)
-    .split(" ")
-    .map((w) => (w ? w[0].toUpperCase() + w.slice(1).toLowerCase() : w))
-    .join(" ")
-}
-
-export function validateTeamName(value: string): string | undefined {
-  const v = value.trim()
-  if (!v) return undefined
-  if (v.length < 3) return "Minimal 3 karakter."
-  if (v.startsWith(".") || v.endsWith(".")) return "Tidak boleh diawali/diakhiri titik."
-  return undefined
-}
-
-export function validateRealName(value: string): string | undefined {
-  const v = value.trim()
-  if (!v) return undefined
-  if (v.length < 3) return "Minimal 3 karakter."
-  if (v.length > 60) return "Maksimal 60 karakter."
-  return undefined
-}
-
-// Mesin Kompresi Gambar Cerdas (Sudah Dioptimasi untuk JPEG)
+// Mesin Kompresi Gambar Cerdas (Dipertahankan karena ini fitur brilian)
 export function compressImage(file: File, maxWidth = 1200): Promise<string> {
   return new Promise((resolve, reject) => {
     const reader = new FileReader()
@@ -122,10 +49,7 @@ export function compressImage(file: File, maxWidth = 1200): Promise<string> {
         const ctx = canvas.getContext("2d")
         ctx?.drawImage(img, 0, 0, width, height)
         
-        // Memaksa konversi ke JPEG 80% agar ukuran file sangat kecil
-        const mimeType = "image/jpeg"
-        const quality = 0.80
-        resolve(canvas.toDataURL(mimeType, quality))
+        resolve(canvas.toDataURL("image/jpeg", 0.80))
       }
       img.onerror = (err) => reject(err)
     }
@@ -133,10 +57,9 @@ export function compressImage(file: File, maxWidth = 1200): Promise<string> {
   })
 }
 
-// Ganti bagian idCounter di lib/registration.ts
 export function createPlayer(role: RosterRole): Player {
   return { 
-    id: crypto.randomUUID(), // Jauh lebih aman dan unik
+    id: crypto.randomUUID(), 
     role, 
     namaLengkap: "", 
     discord: "", 
@@ -146,7 +69,13 @@ export function createPlayer(role: RosterRole): Player {
 }
 
 export function defaultPlayers(): Player[] {
-  return [createPlayer("Ketua"), createPlayer("Wakil Ketua"), createPlayer("Anggota"), createPlayer("Anggota"), createPlayer("Anggota")]
+  return [
+    createPlayer("Ketua"), 
+    createPlayer("Wakil Ketua"), 
+    createPlayer("Anggota"), 
+    createPlayer("Anggota"), 
+    createPlayer("Anggota")
+  ]
 }
 
 export function countRole(players: Player[], role: RosterRole): number {
@@ -162,6 +91,7 @@ export function assignRole(players: Player[], targetId: string, nextRole: Roster
   })
 }
 
+// Deteksi Ganda di Roster
 export function findDuplicateFields(players: Player[]): Set<string> {
   const flagged = new Set<string>()
   const fields: Array<keyof Pick<Player, "discord" | "ign" | "duelId">> = ["discord", "ign", "duelId"]
