@@ -28,7 +28,11 @@ export function RuleCard({ category }: { category: RuleCategory }) {
         </h2>
       </div>
 
-      <Accordion className="mt-4 gap-1" defaultValue={[category.items[0]?.id]}>
+      <Accordion
+        type="multiple"
+        className="mt-4 gap-1"
+        defaultValue={[category.items[0]?.id]}
+      >
         {category.items.map((item) => (
           <AccordionItem
             key={item.id}
@@ -42,7 +46,8 @@ export function RuleCard({ category }: { category: RuleCategory }) {
               </AccordionTrigger>
               <CopyLinkButton anchor={`#${item.id}`} label={item.title} />
             </div>
-            <AccordionContent className="px-3 text-sm leading-relaxed text-slate-400">
+            {/* Penambahan whitespace-pre-line agar enter/baris baru terbaca */}
+            <AccordionContent className="whitespace-pre-line px-3 text-sm leading-relaxed text-slate-400">
               {item.content}
             </AccordionContent>
           </AccordionItem>
