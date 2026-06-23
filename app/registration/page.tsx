@@ -11,6 +11,19 @@ export const metadata: Metadata = {
   openGraph: {
     title: 'Team Wars Indonesia',
     description: 'Official Registration - Daftarkan tim Anda sekarang.',
+    url: 'https://teamwars.web.id/registration',
+    siteName: 'Team Wars Indonesia',
+    images: [
+      {
+        // Sesuaikan dengan nama gambar PNG/JPG Anda di folder public/
+        url: '/opengraph-image.jpg', 
+        width: 1200, // Opsional, tapi disarankan
+        height: 630, // Opsional, tapi disarankan
+        alt: 'Team Wars Indonesia Logo',
+      },
+    ],
+    locale: 'id_ID',
+    type: 'website',
   },
 }
 
