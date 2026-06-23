@@ -45,10 +45,12 @@ export function RegistrationForm() {
   const [players, setPlayers] = useState<Player[]>(defaultPlayers)
   const [logo, setLogo] = useState<UploadedFile | null>(null)
   const [bukti, setBukti] = useState<UploadedFile | null>(null)
+  
+  // State Persetujuan
   const [agreedData, setAgreedData] = useState(false)
   const [agreedRules, setAgreedRules] = useState(false)
 
-  // STATE BARU UNTUK SMART PASTE
+  // State untuk Smart Paste
   const [bulkText, setBulkText] = useState("")
 
   const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>({})
@@ -63,6 +65,7 @@ export function RegistrationForm() {
     setTouchedFields((prev) => (prev[key] ? prev : { ...prev, [key]: true }))
   }
 
+  // Load Draft dari Local Storage
   useEffect(() => {
     try {
       const raw = localStorage.getItem(STORAGE_KEY)
@@ -79,6 +82,7 @@ export function RegistrationForm() {
     setIsDraftLoaded(true)
   }, [])
 
+  // Save Draft ke Local Storage
   useEffect(() => {
     if (!isDraftLoaded) return
     const draft: FormState = { email, namaTim, hex, players }
@@ -103,7 +107,7 @@ export function RegistrationForm() {
     setPlayers((prev) => prev.length <= MIN_PLAYERS ? prev : prev.filter((p) => p.id !== id))
   }
 
-  // FUNGSI INTI SMART PASTE (BARU)
+  // FUNGSI INTI SMART PASTE (VERSI ULTRA FLEKSIBEL)
   function handleSmartPaste() {
     if (!bulkText.trim()) return
 
@@ -113,16 +117,31 @@ export function RegistrationForm() {
     lines.forEach((line) => {
       if (!line.trim()) return
       
-      // Deteksi otomatis pemisah (Koma, Tab, atau Strip)
-      const parts = line.split(/[,\t\-]/).map(item => item.trim())
+      let cleanedLine = line.trim()
       
-      if (parts.length > 0) {
+      // 1. EKSTRAK DUEL ID LEBIH DULU
+      // Cari kumpulan angka & strip (minimal 8 karakter) di bagian paling belakang teks
+      const duelIdMatch = cleanedLine.match(/[\d\s-]{8,}$/)
+      let duelId = ""
+      
+      if (duelIdMatch) {
+        duelId = duelIdMatch[0].replace(/[\s-]/g, "") // Ambil murni angkanya
+        cleanedLine = cleanedLine.slice(0, duelIdMatch.index).trim() // Buang bagian Duel ID dari teks
+        cleanedLine = cleanedLine.replace(/[,\t\/|-]+$/, "").trim() // Bersihkan sisa karakter pemisah di ujung
+      }
+
+      // 2. PECAH SISA TEKS DENGAN CERDAS
+      const parts = cleanedLine
+        .split(/\s*\t\s*|\s*\|\s*|\s*,\s*|\s*\/\s*|\s+-\s+|-/)
+        .map(item => item.trim())
+        .filter(Boolean)
+
+      if (parts.length > 0 || duelId) {
          extractedData.push({
            namaLengkap: parts[0] || "",
            discord: parts[1] || "",
            ign: parts[2] || "",
-           // Duel ID otomatis di-format dari raw number ke format xxx-xxx-xxx
-           duelId: formatDuelId(parts[3] || ""),
+           duelId: duelId ? formatDuelId(duelId) : formatDuelId(parts[3] || ""),
          })
       }
     })
@@ -134,7 +153,7 @@ export function RegistrationForm() {
       
       extractedData.forEach((data, index) => {
         if (index < newPlayers.length) {
-          // Jika barisnya sudah ada, timpa isinya (Role dipertahankan!)
+          // Timpa data tanpa mengubah ID atau Role aslinya
           newPlayers[index] = {
             ...newPlayers[index],
             namaLengkap: data.namaLengkap ? toProperCase(data.namaLengkap) : newPlayers[index].namaLengkap,
@@ -143,7 +162,7 @@ export function RegistrationForm() {
             duelId: data.duelId || newPlayers[index].duelId,
           }
         } else if (newPlayers.length < MAX_PLAYERS) {
-          // Jika baris kurang, buatkan pemain baru otomatis (Default: Anggota)
+          // Tambah otomatis jika kolom kurang
           const newP = createPlayer("Anggota")
           newP.namaLengkap = toProperCase(data.namaLengkap)
           newP.discord = data.discord
@@ -157,7 +176,7 @@ export function RegistrationForm() {
     })
 
     alert(`⚡ Berhasil mengekstrak ${Math.min(extractedData.length, MAX_PLAYERS)} data pemain! Jangan lupa periksa kembali Role (Ketua/Wakil) mereka.`)
-    setBulkText("") // Kosongkan kembali form
+    setBulkText("") 
   }
 
   const ketuaCount = countRole(players, "Ketua")
@@ -341,7 +360,7 @@ export function RegistrationForm() {
             </div>
           )}
 
-          {/* ----- UI SMART PASTE MULAI DARI SINI ----- */}
+          {/* AREA SMART PASTE */}
           <div className="mb-6 rounded-xl border border-primary/30 bg-primary/5 p-4 sm:p-5">
             <div className="mb-3">
               <h3 className="text-sm font-bold text-primary flex items-center gap-2">
@@ -349,14 +368,14 @@ export function RegistrationForm() {
               </h3>
               <p className="text-xs text-muted-foreground mt-1">
                 Copy-paste data pemain dari Spreadsheet/Notepad ke sini. <br/>
-                <strong>Format:</strong> Nama Lengkap - Discord - IGN - ID Duel Links (1 Baris = 1 Pemain).
+                <strong>Format:</strong> Nama - Discord - IGN - ID Duel Links (Gunakan koma/strip/garis miring sebagai pemisah).
               </p>
             </div>
             
             <textarea
               value={bulkText}
               onChange={(e) => setBulkText(e.target.value)}
-              placeholder="Contoh:&#10;Seto Kaiba - kaiba#123 - BlueEyesMaster - 123456789&#10;Yugi Moto - yugi#456 - KingOfGames - 987654321"
+              placeholder="Contoh:&#10;Seto Kaiba / kaiba#123 / BlueEyesMaster / 123-456-789&#10;Yugi Moto, yugi#456, KingOfGames, 987654321"
               className="w-full h-24 rounded-lg border border-border bg-background p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-muted-foreground/40 transition-all"
             />
             
@@ -369,7 +388,6 @@ export function RegistrationForm() {
               Ekstrak & Masukkan ke Form
             </button>
           </div>
-          {/* ----- BATAS UI SMART PASTE ----- */}
 
           <div className="flex flex-col gap-4">
             {players.map((p, index) => {
@@ -417,7 +435,6 @@ export function RegistrationForm() {
 
         <section className="glass glow-border rounded-2xl border p-5 sm:p-6">
           <div className="space-y-4">
-            
             <label className="flex items-start gap-3 cursor-pointer rounded-xl border border-border bg-card p-4 transition-colors hover:bg-muted/50">
               <input 
                 type="checkbox" 
