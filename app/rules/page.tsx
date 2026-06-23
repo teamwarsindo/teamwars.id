@@ -3,6 +3,20 @@ import { RulebookHero } from '@/components/rulebook-hero'
 import { RuleCard } from '@/components/rule-card'
 import { BackToTop } from '@/components/back-to-top'
 import { ruleCategories } from '@/lib/rules-data'
+import type { Metadata } from 'next'
+
+// Ini akan menimpa judul dan deskripsi dari layout.tsx khusus untuk halaman ini
+export const metadata: Metadata = {
+  title: 'Team Wars Indonesia',
+  description: 'Official Rulebook & Guidelines - Baca peraturan lengkap sebelum kalian kena sanksi.',
+  openGraph: {
+    title: 'Team Wars Indonesia',
+    description: 'Official Rulebook & Guidelines - Baca peraturan lengkap sebelum kalian kena sanksi.',
+    // Jika Anda punya gambar khusus untuk halaman rules, bisa dimasukkan di sini.
+    // Jika tidak ditulis, ia akan otomatis memakai logo dari layout.tsx
+    // images: [{ url: '/rules-banner.png', width: 1200, height: 630 }],
+  },
+}
 
 export default function RulebookPage() {
   return (
