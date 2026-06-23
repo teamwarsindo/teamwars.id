@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, Suspense } from "react"
 import Image from "next/image"
 import { useSearchParams } from 'next/navigation'
 import { cn } from "@/lib/utils"
@@ -14,23 +14,22 @@ import { ShieldIcon, DiscordIcon, RulesIcon, FormIcon } from "@/components/icons
 const LAUNCH_TARGET = new Date("2026-07-01T07:01:26+07:00").getTime()
 
 // Waktu Tutup: 14 hari (2 minggu) setelah Launch Target
-// Rumus: Waktu Buka + (14 hari * 24 jam * 60 menit * 60 detik * 1000 milidetik)
-const CLOSE_TARGET = LAUNCH_TARGET + (1 * 1 * 1 * 15 * 1000)
+// Rumus: 14 hari * 24 jam * 60 menit * 60 detik * 1000 milidetik
+const CLOSE_TARGET = LAUNCH_TARGET + (14 * 24 * 60 * 60 * 1000)
 
-// Tipe data untuk 3 fase siklus pendaftaran
 type RegistrationPhase = "PRE_LAUNCH" | "OPEN" | "CLOSED"
 
-export default function LandingPage() {
+// Komponen terpisah untuk menangani parameter URL agar Next.js tidak protes (Suspense boundary)
+function AlertNotOpen() {
   const searchParams = useSearchParams()
 
   useEffect(() => {
     if (searchParams.get('error') === 'not_open') {
-      alert("Sabar ya! Registrasi belum dibuka. Tunggu hitung mundur selesai ⏳");
-      // Bisa diganti pakai komponen Toast yang lebih cantik
+      alert("Sabar ya! Registrasi belum dibuka. Tunggu hitung mundur selesai ⏳")
     }
   }, [searchParams])
 
-  // ... return UI landing page ...
+  return null
 }
 
 export default function Page() {
@@ -72,12 +71,17 @@ export default function Page() {
     return "Registration Has Ended"
   }
 
-  // Tentukan target countdown: Jika belum buka, hitung mundur ke waktu buka. Jika sudah buka, hitung mundur ke waktu tutup.
+  // Tentukan target countdown
   const activeTarget = phase === "PRE_LAUNCH" ? LAUNCH_TARGET : CLOSE_TARGET
 
   return (
     <main className="relative flex min-h-[100dvh] flex-col overflow-hidden bg-background text-foreground">
       
+      {/* Pengecekan Error dari Middleware */}
+      <Suspense fallback={null}>
+        <AlertNotOpen />
+      </Suspense>
+
       {/* Ambient esports glow */}
       <div className="ambient-glow pointer-events-none absolute inset-x-0 top-0 h-[420px]" aria-hidden="true" />
 
