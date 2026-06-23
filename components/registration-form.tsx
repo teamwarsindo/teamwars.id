@@ -107,7 +107,7 @@ export function RegistrationForm() {
     setPlayers((prev) => prev.length <= MIN_PLAYERS ? prev : prev.filter((p) => p.id !== id))
   }
 
-  // FUNGSI INTI SMART PASTE (VERSI ULTRA FLEKSIBEL)
+  // FUNGSI INTI SMART PASTE (VERSI ULTRA FLEKSIBEL + INSTANT VALIDATION)
   function handleSmartPaste() {
     if (!bulkText.trim()) return
 
@@ -119,18 +119,17 @@ export function RegistrationForm() {
       
       let cleanedLine = line.trim()
       
-      // 1. EKSTRAK DUEL ID LEBIH DULU
-      // Cari kumpulan angka & strip (minimal 8 karakter) di bagian paling belakang teks
+      // 1. Ekstrak Duel ID lebih dulu dari bagian paling belakang
       const duelIdMatch = cleanedLine.match(/[\d\s-]{8,}$/)
       let duelId = ""
       
       if (duelIdMatch) {
-        duelId = duelIdMatch[0].replace(/[\s-]/g, "") // Ambil murni angkanya
-        cleanedLine = cleanedLine.slice(0, duelIdMatch.index).trim() // Buang bagian Duel ID dari teks
-        cleanedLine = cleanedLine.replace(/[,\t\/|-]+$/, "").trim() // Bersihkan sisa karakter pemisah di ujung
+        duelId = duelIdMatch[0].replace(/[\s-]/g, "")
+        cleanedLine = cleanedLine.slice(0, duelIdMatch.index).trim()
+        cleanedLine = cleanedLine.replace(/[,\t\/|-]+$/, "").trim()
       }
 
-      // 2. PECAH SISA TEKS DENGAN CERDAS
+      // 2. Pecah sisa teks dengan multi-pemisah dan multi-spasi cerdas
       const parts = cleanedLine
         .split(/\s*\t\s*|\s*\|\s*|\s*,\s*|\s*\/\s*|\s+-\s+|-/)
         .map(item => item.trim())
@@ -148,34 +147,46 @@ export function RegistrationForm() {
 
     if (extractedData.length === 0) return
 
-    setPlayers((prev) => {
-      const newPlayers = [...prev]
-      
-      extractedData.forEach((data, index) => {
-        if (index < newPlayers.length) {
-          // Timpa data tanpa mengubah ID atau Role aslinya
-          newPlayers[index] = {
-            ...newPlayers[index],
-            namaLengkap: data.namaLengkap ? toProperCase(data.namaLengkap) : newPlayers[index].namaLengkap,
-            discord: data.discord || newPlayers[index].discord,
-            ign: data.ign || newPlayers[index].ign,
-            duelId: data.duelId || newPlayers[index].duelId,
-          }
-        } else if (newPlayers.length < MAX_PLAYERS) {
-          // Tambah otomatis jika kolom kurang
-          const newP = createPlayer("Anggota")
-          newP.namaLengkap = toProperCase(data.namaLengkap)
-          newP.discord = data.discord
-          newP.ign = data.ign
-          newP.duelId = data.duelId
-          newPlayers.push(newP)
+    // 3. Persiapkan pencatatan `touched` agar error langsung muncul jika tidak valid
+    const newTouched: Record<string, boolean> = {}
+    const newPlayers = [...players]
+
+    extractedData.forEach((data, index) => {
+      let playerId = ""
+
+      if (index < newPlayers.length) {
+        newPlayers[index] = {
+          ...newPlayers[index],
+          namaLengkap: data.namaLengkap ? toProperCase(data.namaLengkap) : newPlayers[index].namaLengkap,
+          discord: data.discord || newPlayers[index].discord,
+          ign: data.ign || newPlayers[index].ign,
+          duelId: data.duelId || newPlayers[index].duelId,
         }
-      })
-      
-      return newPlayers
+        playerId = newPlayers[index].id
+      } else if (newPlayers.length < MAX_PLAYERS) {
+        const newP = createPlayer("Anggota")
+        newP.namaLengkap = toProperCase(data.namaLengkap)
+        newP.discord = data.discord
+        newP.ign = data.ign
+        newP.duelId = data.duelId
+        newPlayers.push(newP)
+        playerId = newP.id
+      }
+
+      // Tandai kolom pemain ini sebagai "tersentuh"
+      if (playerId) {
+        newTouched[`${playerId}-namaLengkap`] = true
+        newTouched[`${playerId}-discord`] = true
+        newTouched[`${playerId}-ign`] = true
+        newTouched[`${playerId}-duelId`] = true
+      }
     })
 
-    alert(`⚡ Berhasil mengekstrak ${Math.min(extractedData.length, MAX_PLAYERS)} data pemain! Jangan lupa periksa kembali Role (Ketua/Wakil) mereka.`)
+    // 4. Update data form dan status touched secara bersamaan
+    setPlayers(newPlayers)
+    setTouchedFields((prev) => ({ ...prev, ...newTouched }))
+
+    alert(`⚡ Berhasil mengekstrak ${Math.min(extractedData.length, MAX_PLAYERS)} data pemain! Perhatikan kotak berwarna merah jika ada data yang tidak sesuai format.`)
     setBulkText("") 
   }
 
@@ -278,6 +289,7 @@ export function RegistrationForm() {
     }
   }
 
+  // Komponen UI saat sukses berhasil register
   if (success) {
     return (
       <div className="flex min-h-[60vh] flex-col items-center justify-center px-6 text-center">
@@ -375,7 +387,7 @@ export function RegistrationForm() {
             <textarea
               value={bulkText}
               onChange={(e) => setBulkText(e.target.value)}
-              placeholder="Contoh:&#10;Seto Kaiba / kaiba#123 / BlueEyesMaster / 123-456-789&#10;Yugi Moto, yugi#456, KingOfGames, 987654321"
+              placeholder="Contoh:&#10;Seto Kaiba / kaiba / BlueEyesMaster / 123-456-789&#10;Yugi Moto, yugi, KingOfGames, 987654321"
               className="w-full h-24 rounded-lg border border-border bg-background p-3 text-sm focus:border-primary focus:ring-1 focus:ring-primary placeholder:text-muted-foreground/40 transition-all"
             />
             
@@ -435,43 +447,4 @@ export function RegistrationForm() {
 
         <section className="glass glow-border rounded-2xl border p-5 sm:p-6">
           <div className="space-y-4">
-            <label className="flex items-start gap-3 cursor-pointer rounded-xl border border-border bg-card p-4 transition-colors hover:bg-muted/50">
-              <input 
-                type="checkbox" 
-                checked={agreedData} 
-                onChange={(e) => setAgreedData(e.target.checked)}
-                className="mt-1 h-4 w-4 shrink-0 rounded border-primary bg-background text-primary focus:ring-primary focus:ring-offset-background"
-              />
-              <span className="text-sm text-muted-foreground">
-                Saya mewakili tim menyatakan bahwa seluruh data yang diisi adalah benar, asli, dan valid.
-              </span>
-            </label>
-
-            <label className="flex items-start gap-3 cursor-pointer rounded-xl border border-border bg-card p-4 transition-colors hover:bg-muted/50">
-              <input 
-                type="checkbox" 
-                checked={agreedRules} 
-                onChange={(e) => setAgreedRules(e.target.checked)}
-                className="mt-1 h-4 w-4 shrink-0 rounded border-primary bg-background text-primary focus:ring-primary focus:ring-offset-background"
-              />
-              <span className="text-sm text-muted-foreground">
-                Saya mewakili tim menyetujui seluruh syarat dan ketentuan yang tertulis di dalam <a href="/rules" target="_blank" rel="noopener noreferrer" className="font-semibold text-primary hover:underline">Rulebook TWI Season 7</a>.
-              </span>
-            </label>
-
-            <button 
-              type="button" 
-              onClick={handleReviewClick} 
-              disabled={!agreedData || !agreedRules} 
-              className="w-full rounded-xl bg-primary py-4 text-base font-bold text-primary-foreground shadow-lg transition-all hover:brightness-110 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:brightness-100 disabled:active:scale-100 mt-2"
-            >
-              Review Pendaftaran
-            </button>
-          </div>
-        </section>
-      </form>
-
-      <ReviewModal open={modalOpen} onClose={() => setModalOpen(false)} form={{ email, namaTim, hex, players }} logo={logo} bukti={bukti} submitting={submitting} serverError={serverError} onConfirm={handleSubmit} />
-    </>
-  )
-}
+            <label class
