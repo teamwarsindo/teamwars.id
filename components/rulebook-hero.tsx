@@ -1,4 +1,4 @@
-import { ShieldCheck } from 'lucide-react'
+import { ShieldIcon } from '@/components/icons' // Menggunakan ShieldIcon kustom yang sudah ada
 import { CopyLinkButton } from '@/components/copy-link-button'
 
 export function RulebookHero() {
@@ -11,7 +11,7 @@ export function RulebookHero() {
       />
 
       <p className="flex items-center justify-center gap-2 text-xs font-semibold uppercase tracking-[0.35em] text-slate-400">
-        <ShieldCheck className="size-4 text-blue-400" aria-hidden="true" />
+        <ShieldIcon className="size-4 text-blue-400" aria-hidden="true" />
         Official Rulebook
       </p>
 
