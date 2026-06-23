@@ -1,7 +1,7 @@
 'use client'
 
 import { useState } from 'react'
-import { Check, Link2 } from 'lucide-react'
+import { CheckIcon, LinkIcon } from '@/components/icons' // Ganti dari lucide-react
 import { cn } from '@/lib/utils'
 
 type CopyLinkButtonProps = {
@@ -49,13 +49,13 @@ export function CopyLinkButton({
       >
         {copied ? (
           <>
-            <Check className="size-4" aria-hidden="true" />
+            <CheckIcon className="size-4" aria-hidden="true" />
             Tersalin
           </>
         ) : (
           <>
             Salin
-            <Link2 className="size-4" aria-hidden="true" />
+            <LinkIcon className="size-4" aria-hidden="true" />
           </>
         )}
       </button>
@@ -84,10 +84,10 @@ export function CopyLinkButton({
       )}
     >
       {copied ? (
-        <Check className="size-4" aria-hidden="true" />
+        <CheckIcon className="size-4" aria-hidden="true" />
       ) : (
-        <Link2 className="size-4" aria-hidden="true" />
-      )}
+        <LinkIcon className="size-4" aria-hidden="true" />
+      )}    
     </span>
   )
 }
