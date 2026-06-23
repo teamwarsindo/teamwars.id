@@ -9,13 +9,8 @@ import { ThemeToggle } from "@/components/theme-toggle"
 import { buttonVariants } from "@/components/ui/button"
 import { ShieldIcon, DiscordIcon, RulesIcon, FormIcon } from "@/components/icons"
 
-// 1. Definisikan Waktu Buka dan Waktu Tutup
-// Waktu Buka: 1 Juli 2026, 08:00 WIB
-const LAUNCH_TARGET = new Date("2026-07-01T07:01:26+07:00").getTime()
-
-// Waktu Tutup: 14 hari (2 minggu) setelah Launch Target
-// Rumus: 14 hari * 24 jam * 60 menit * 60 detik * 1000 milidetik
-const CLOSE_TARGET = LAUNCH_TARGET + (14 * 24 * 60 * 60 * 1000)
+// 👈 TAMBAHKAN IMPORT INI
+import { LAUNCH_TARGET, CLOSE_TARGET } from "@/lib/config" 
 
 type RegistrationPhase = "PRE_LAUNCH" | "OPEN" | "CLOSED"
 
