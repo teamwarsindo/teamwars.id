@@ -18,7 +18,7 @@ import {
   assignRole
 } from "@/lib/registration"
 
-export default function RegistrationForm() {
+export function RegistrationForm() {
   // --- STATE MANAJEMEN ---
   const [form, setForm] = useState<FormState>(() => {
     if (typeof window !== "undefined") {
