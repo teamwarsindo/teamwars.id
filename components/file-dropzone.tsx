@@ -2,10 +2,7 @@
 
 import { useRef, useState, type DragEvent } from "react"
 import { UploadIcon, CloseIcon } from "@/components/icons"
-import { compressImage, type UploadedFile } from "@/lib/registration"
-
-// Kita set langsung limit 10MB asli di sini untuk memastikan kecocokan (10 * 1024 * 1024)
-const LOCAL_MAX_FILE_SIZE = 10485760 
+import { MAX_FILE_SIZE, type UploadedFile } from "@/lib/registration"
 
 interface FileDropzoneProps {
   id: string
@@ -20,7 +17,7 @@ export function FileDropzone({ id, label, hint, value, onChange, error }: FileDr
   const inputRef = useRef<HTMLInputElement>(null)
   const [dragging, setDragging] = useState(false)
   const [localError, setLocalError] = useState<string | null>(null)
-  const [isCompressing, setIsCompressing] = useState(false)
+  const [isReading, setIsReading] = useState(false)
 
   async function handleFile(file: File | undefined) {
     if (!file) return
@@ -30,24 +27,33 @@ export function FileDropzone({ id, label, hint, value, onChange, error }: FileDr
       setLocalError("File harus berupa gambar.")
       return
     }
-    
-    // UBAH VALIDASI: Menggunakan batas baru 10MB
-    if (file.size > LOCAL_MAX_FILE_SIZE) {
-      setLocalError("Ukuran file asli melebihi batas 10MB.")
+
+    // Menggunakan nilai MAX_FILE_SIZE asli dari lib/registration
+    if (file.size > MAX_FILE_SIZE) {
+      const allowedSizeMb = (MAX_FILE_SIZE / (1024 * 1024)).toFixed(0)
+      setLocalError(`Ukuran file asli melebihi batas ${allowedSizeMb}MB.`)
       return
     }
 
     try {
-      setIsCompressing(true)
-      // Menjalankan mesin kompresi pintar langsung di HP/PC peserta
-      const base64 = await compressImage(file)
-      // Ukuran simulasi setelah dikompres
-      const compressedSize = Math.round((base64.length * 3) / 4)
-      onChange({ name: file.name, size: compressedSize, base64 })
+      setIsReading(true)
+      
+      // Membaca file asli menjadi Base64 murni tanpa kompresi
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        const base64 = reader.result as string
+        onChange({ name: file.name, size: file.size, base64 })
+        setIsReading(false)
+      }
+      reader.onerror = () => {
+        setLocalError("Gagal membaca file gambar.")
+        setIsReading(false)
+      }
+      reader.readAsDataURL(file)
+
     } catch (err) {
       setLocalError("Gagal memproses gambar.")
-    } finally {
-      setIsCompressing(false)
+      setIsReading(false)
     }
   }
 
@@ -80,25 +86,23 @@ export function FileDropzone({ id, label, hint, value, onChange, error }: FileDr
         <div
           role="button"
           tabIndex={0}
-          onClick={() => !isCompressing && inputRef.current?.click()}
+          onClick={() => !isReading && inputRef.current?.click()}
           onDragOver={(e) => { e.preventDefault(); setDragging(true) }}
           onDragLeave={() => setDragging(false)}
           onDrop={onDrop}
           className={`flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border border-dashed px-4 py-8 text-center transition-colors ${
             dragging ? "border-primary bg-primary/5" : shownError ? "border-destructive bg-background/40" : "border-border bg-background/40 hover:border-primary/50 hover:bg-primary/5"
-          } ${isCompressing ? "opacity-50 cursor-wait" : ""}`}
+          } ${isReading ? "opacity-50 cursor-wait" : ""}`}
         >
           <UploadIcon className="h-6 w-6 text-muted-foreground" />
           <p className="text-sm font-medium text-foreground">
-            {isCompressing ? "Memproses gambar..." : "Seret & lepas atau klik untuk unggah"}
+            {isReading ? "Membaca berkas..." : "Seret & lepas atau klik untuk unggah"}
           </p>
-          {/* UBAH LABEL TEKS: Agar dinamis mengarah ke maks 10MB */}
           <p className="text-xs text-muted-foreground">{hint ?? "PNG / JPG, maks 10MB"}</p>
         </div>
       )}
-      <input refRef={inputRef} id={id} type="file" accept="image/*" className="hidden" onChange={(e) => handleFile(e.target.files?.[0])} />
+      <input ref={inputRef} id={id} type="file" accept="image/*" className="hidden" onChange={(e) => handleFile(e.target.files?.[0])} />
       {shownError && <p className="mt-1 text-xs font-medium text-destructive">{shownError}</p>}
     </div>
-  )
-      }
-      
+    )
+}
