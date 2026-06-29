@@ -2,7 +2,10 @@
 
 import { useRef, useState, type DragEvent } from "react"
 import { UploadIcon, CloseIcon } from "@/components/icons"
-import { MAX_FILE_SIZE, compressImage, type UploadedFile } from "@/lib/registration"
+import { compressImage, type UploadedFile } from "@/lib/registration"
+
+// Kita set langsung limit 10MB asli di sini untuk memastikan kecocokan (10 * 1024 * 1024)
+const LOCAL_MAX_FILE_SIZE = 10485760 
 
 interface FileDropzoneProps {
   id: string
@@ -27,8 +30,10 @@ export function FileDropzone({ id, label, hint, value, onChange, error }: FileDr
       setLocalError("File harus berupa gambar.")
       return
     }
-    if (file.size > MAX_FILE_SIZE) {
-      setLocalError("Ukuran file asli melebihi batas 5MB.")
+    
+    // UBAH VALIDASI: Menggunakan batas baru 10MB
+    if (file.size > LOCAL_MAX_FILE_SIZE) {
+      setLocalError("Ukuran file asli melebihi batas 10MB.")
       return
     }
 
@@ -87,11 +92,13 @@ export function FileDropzone({ id, label, hint, value, onChange, error }: FileDr
           <p className="text-sm font-medium text-foreground">
             {isCompressing ? "Memproses gambar..." : "Seret & lepas atau klik untuk unggah"}
           </p>
-          <p className="text-xs text-muted-foreground">{hint ?? "PNG / JPG, maks 5MB"}</p>
+          {/* UBAH LABEL TEKS: Agar dinamis mengarah ke maks 10MB */}
+          <p className="text-xs text-muted-foreground">{hint ?? "PNG / JPG, maks 10MB"}</p>
         </div>
       )}
-      <input ref={inputRef} id={id} type="file" accept="image/*" className="hidden" onChange={(e) => handleFile(e.target.files?.[0])} />
+      <input refRef={inputRef} id={id} type="file" accept="image/*" className="hidden" onChange={(e) => handleFile(e.target.files?.[0])} />
       {shownError && <p className="mt-1 text-xs font-medium text-destructive">{shownError}</p>}
     </div>
   )
-}
+      }
+      
