@@ -232,17 +232,26 @@ export function RegistrationForm() {
   }
 
   // ===================================================================
-  // REVISI HELPER: TANPA TIMESTAMP AGAR URL /logo/nama-tim & /bukti_transfer/nama-tim
+  // REVISI HELPER: VALIDASI MAKSIMAL 10MB & TANPA TIMESTAMP
   // ===================================================================
   async function uploadKeCloudinary(
     base64Data: string, 
     type: "logo" | "bukti", 
     teamName: string
   ): Promise<string> {
-    // Membuat nama tim bersih ramah URL (contoh: "Akatsuki Team" -> "akatsuki-team")
-    const cleanTeamName = teamName.toLowerCase().replace(/[^a-z0-9]/g, "-").replace(/-+/g, "-");
     
-    // public_id langsung diisi nama tim (tanpa prefiks tipe & tanpa timestamp) agar URL-nya bersih bersih bersih!
+    // 1. VALIDASI UKURAN FILE MAKSIMAL 10MB (10 * 1024 * 1024 bytes)
+    // Menghitung estimasi ukuran asli dari string Base64
+    const stringLength = base64Data.length - (base64Data.indexOf(',') + 1);
+    const sizeInBytes = (stringLength * (3 / 4)) - (base64Data.endsWith('==') ? 2 : base64Data.endsWith('=') ? 1 : 0);
+    const maxSizeInBytes = 10 * 1024 * 1024; // 10 Megabytes
+
+    if (sizeInBytes > maxSizeInBytes) {
+      throw new Error(`Ukuran file ${type === "logo" ? "Logo" : "Bukti Transfer"} terlalu besar! Maksimal ukuran file adalah 10MB.`);
+    }
+
+    // 2. PROSES PENAMAAN FILE CLEAN URL
+    const cleanTeamName = teamName.toLowerCase().replace(/[^a-z0-9]/g, "-").replace(/-+/g, "-");
     const customFileName = cleanTeamName; 
     const folderPath = type === "logo" ? "logo" : "bukti_transfer";
 
@@ -276,13 +285,14 @@ export function RegistrationForm() {
     })
 
     if (!res.ok) {
-      throw new Error(`Nama tim "${teamName}" kemungkinan sudah terdaftar atau file gagal diunggah ke Cloudinary.`);
+      // Jika error karena nama file duplikat (karena overwrite: false)
+      throw new Error(`Nama tim "${teamName}" kemungkinan sudah terdaftar atau file gagal diunggah.`);
     }
 
     const data = await res.json()
     return data.secure_url
   }
-
+  
   // ==========================================
   // CORE LOGIC: HANDLESUBMIT TO CLOUDINARY & VERCEL KV
   // ==========================================
