@@ -3,7 +3,8 @@ export const ROSTER_ROLES: RosterRole[] = ["Ketua", "Wakil Ketua", "Anggota"]
 
 export const MIN_PLAYERS = 5
 export const MAX_PLAYERS = 10
-export const MAX_FILE_SIZE = 5 * 1024 * 1024 
+// BATAS UPLOAD DINAIKKAN MENJADI 10MB
+export const MAX_FILE_SIZE = 10 * 1024 * 1024 
 export const STORAGE_KEY = "twi-s7-duel-links-draft"
 
 export interface Player {
@@ -26,35 +27,6 @@ export interface FormState {
   namaTim: string
   hex: string
   players: Player[]
-}
-
-// Mesin Kompresi Gambar Cerdas (Dipertahankan karena ini fitur brilian)
-export function compressImage(file: File, maxWidth = 1200): Promise<string> {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader()
-    reader.readAsDataURL(file)
-    reader.onload = (event) => {
-      const img = new Image()
-      img.src = event.target?.result as string
-      img.onload = () => {
-        let width = img.width
-        let height = img.height
-        if (width > maxWidth) {
-          height = Math.round((height * maxWidth) / width)
-          width = maxWidth
-        }
-        const canvas = document.createElement("canvas")
-        canvas.width = width
-        canvas.height = height
-        const ctx = canvas.getContext("2d")
-        ctx?.drawImage(img, 0, 0, width, height)
-        
-        resolve(canvas.toDataURL("image/jpeg", 0.80))
-      }
-      img.onerror = (err) => reject(err)
-    }
-    reader.onerror = (err) => reject(err)
-  })
 }
 
 export function createPlayer(role: RosterRole): Player {
