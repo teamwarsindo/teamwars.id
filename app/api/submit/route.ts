@@ -7,35 +7,24 @@ export async function POST(request: Request) {
   try {
     const data = await request.json();
 
-    // 1. KIRIM DATA KE GOOGLE APPS SCRIPT DULU
-    const scriptUrl = process.env.APPSCRIPT_URL;
-    if (!scriptUrl) throw new Error("APPSCRIPT_URL is not defined");
-
-    const appScriptResponse = await fetch(scriptUrl, {
-      method: "POST",
-      body: JSON.stringify(data),
-      headers: { "Content-Type": "application/json" },
-    });
-
-    if (!appScriptResponse.ok) {
-      throw new Error("Gagal menyimpan data ke Google Sheets");
-    }
-
-    // 2. AMBIL DATA DARI PAYLOAD
-    // Sesuaikan nama variabel ini dengan data yang dikirim dari form Next.js kamu!
+    // 1. DESTRUKTURISASI DATA BARU DARI FRONTEND PAYLOAD
     const { 
       email, 
       namaTim, 
-      namaKapten, 
-      noWhatsapp, 
-      linkBuktiTransfer, 
-      linkLogo 
+      warna,
+      logoTim,       // Berisi { original, compressed }
+      buktiTransfer, // Berisi { original, compressed }
+      players        // Array objek berisi data roster lengkap
     } = data; 
 
-    // 3. SIAPKAN PROMISE UNTUK KIRIM BANYAK EMAIL SEKALIGUS
+    // Cari tahu siapa Ketua & Wakil Ketua untuk kebutuhan visual Email Admin
+    const ketua = players.find((p: any) => p.role === "Ketua") || { namaLengkap: "-", discord: "-", idDuelLinks: "-" };
+    const wakil = players.find((p: any) => p.role === "Wakil Ketua") || { namaLengkap: "-", discord: "-", idDuelLinks: "-" };
+
+    // 2. SIAPKAN PROMISE UNTUK KIRIM BANYAK EMAIL SEKALIGUS VIA RESEND
     const emailPromises = [];
 
-    // --- A. Email ke Peserta ---
+    // --- A. Email ke Peserta (Konfirmasi Pendaftaran) ---
     if (email) {
       emailPromises.push(
         resend.emails.send({
@@ -43,73 +32,105 @@ export async function POST(request: Request) {
           to: email,
           subject: `Pendaftaran Berhasil: Tim ${namaTim}`,
           html: `
-            <div style="font-family: sans-serif;">
-              <h2>Halo, Tim ${namaTim}! 🎉</h2>
-              <p>Terima kasih telah mendaftar. Data dan bukti transfer Anda telah kami terima.</p>
-              <p>Tim kami akan segera memverifikasi pendaftaran Anda.</p>
+            <div style="font-family: sans-serif; max-width: 600px; line-height: 1.6;">
+              <h2 style="color: ${warna || '#3b82f6'};">Halo, Tim ${namaTim}! 🎉</h2>
+              <p>Terima kasih telah mendaftar di <strong>TWI Season 7</strong>. Data roster dan bukti transfer Anda telah kami terima di sistem.</p>
+              <p>Tim admin & finance kami akan segera melakukan proses verifikasi dokumen. Harap pastikan akun Discord <strong>${ketua.discord}</strong> tetap aktif untuk koordinasi lebih lanjut.</p>
+              <br/>
+              <p style="font-size: 12px; color: #666;">Maju terus dan persiapkan strategi terbaik tim Anda!</p>
             </div>
           `,
         })
       );
     }
 
-    // --- B. Email ke Finance (Bukti Transfer) ---
+    // --- B. Email ke Finance (Menerima URL Bukti Transfer FULL SIZE) ---
     emailPromises.push(
       resend.emails.send({
         from: 'System Teamwars <regist@teamwars.web.id>',
         to: 'finance@teamwars.web.id',
         subject: `[Verifikasi Pembayaran] Tim ${namaTim}`,
         html: `
-          <div style="font-family: sans-serif;">
+          <div style="font-family: sans-serif; max-width: 600px;">
             <h2>Pengecekan Pembayaran Baru</h2>
-            <p>Tim <strong>${namaTim}</strong> baru saja mendaftar. Mohon segera cek bukti transfer mereka.</p>
-            <p><strong>Link Bukti Transfer:</strong> <br/> <a href="${linkBuktiTransfer}">${linkBuktiTransfer}</a></p>
+            <p>Tim <strong style="color: ${warna || '#000'};">${namaTim}</strong> baru saja mendaftar. Mohon segera periksa keaslian mutasi rekening mereka.</p>
+            <p><strong>Link Bukti Transfer (Original/Full Size):</strong> <br/> 
+               <a href="${buktiTransfer?.original}" target="_blank" style="color: #3b82f6; font-weight: bold;">${buktiTransfer?.original}</a>
+            </p>
           </div>
         `,
       })
     );
 
-    // --- C. Email ke Creative (Logo Tim) ---
+    // --- C. Email ke Creative (Menerima URL Logo FULL SIZE) ---
     emailPromises.push(
       resend.emails.send({
         from: 'System Teamwars <regist@teamwars.web.id>',
         to: 'creative@teamwars.web.id',
         subject: `[Aset Logo] Tim ${namaTim}`,
         html: `
-          <div style="font-family: sans-serif;">
-            <h2>Logo Tim Baru</h2>
-            <p>Berikut adalah aset logo untuk tim <strong>${namaTim}</strong> yang baru mendaftar.</p>
-            <p><strong>Link Logo:</strong> <br/> <a href="${linkLogo}">${linkLogo}</a></p>
+          <div style="font-family: sans-serif; max-width: 600px;">
+            <h2>Aset Logo Tim Baru</h2>
+            <p>Berikut adalah aset logo mentah resolusi penuh untuk kebutuhan broadcast/overlay tim <strong>${namaTim}</strong>.</p>
+            <p><strong>Link Logo (Original/Full Size):</strong> <br/> 
+               <a href="${logoTim?.original}" target="_blank" style="color: #3b82f6; font-weight: bold;">${logoTim?.original}</a>
+            </p>
           </div>
         `,
       })
     );
 
-    // --- D. Email ke Admin (Informasi Lengkap) ---
+    // --- D. Email ke Admin (Informasi Ringkasan & Roster Lengkap) ---
     emailPromises.push(
       resend.emails.send({
         from: 'System Teamwars <regist@teamwars.web.id>',
         to: 'admin@teamwars.web.id',
         subject: `[Registrasi Baru] Data Lengkap Tim ${namaTim}`,
         html: `
-          <div style="font-family: sans-serif;">
-            <h2>Data Pendaftaran Baru</h2>
-            <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%; max-width: 600px;">
-              <tr><td width="30%"><strong>Nama Tim</strong></td><td>${namaTim}</td></tr>
-              <tr><td><strong>Kapten</strong></td><td>${namaKapten}</td></tr>
-              <tr><td><strong>Email</strong></td><td>${email}</td></tr>
-              <tr><td><strong>WhatsApp</strong></td><td>${noWhatsapp}</td></tr>
+          <div style="font-family: sans-serif; max-width: 600px;">
+            <h2>Data Pendaftaran Tim: ${namaTim}</h2>
+            <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%; border-color: #e2e8f0; margin-bottom: 20px;">
+              <tr style="background-color: #f8fafc;"><td width="35%"><strong>Nama Tim</strong></td><td><strong style="color: ${warna || '#000'};">${namaTim}</strong></td></tr>
+              <tr><td><strong>Warna Identitas</strong></td><td><code>${warna}</code></td></tr>
+              <tr><td><strong>Email Kontak</strong></td><td>${email}</td></tr>
+              <tr><td><strong>Ketua Tim (Discord)</strong></td><td>${ketua.namaLengkap} (${ketua.discord})</td></tr>
+              <tr><td><strong>Wakil Ketua (Discord)</strong></td><td>${wakil.namaLengkap} (${wakil.discord})</td></tr>
             </table>
-            <p><em>Pastikan data masuk ke Google Sheets dengan benar.</em></p>
+
+            <h3>📋 Roster Lengkap Pemain</h3>
+            <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%; border-color: #e2e8f0; font-size: 13px;">
+              <thead style="background-color: #f1f5f9;">
+                <tr>
+                  <th>No</th>
+                  <th>Jabatan</th>
+                  <th>Nama Lengkap</th>
+                  <th>Discord</th>
+                  <th>IGN</th>
+                  <th>ID Duel Links</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${players.map((p: any, i: number) => `
+                  <tr>
+                    <td align="center">${i + 1}</td>
+                    <td><strong>${p.role}</strong></td>
+                    <td>${p.namaLengkap}</td>
+                    <td><code>${p.discord}</code></td>
+                    <td>${p.ign}</td>
+                    <td style="font-family: monospace;">${p.idDuelLinks}</td>
+                  </tr>
+                `).join('')}
+              </tbody>
+            </table>
           </div>
         `,
       })
     );
 
-    // 4. EKSEKUSI SEMUA EMAIL SECARA PARALEL
+    // 3. EKSEKUSI SEMUA EMAIL SECARA PARALEL
     await Promise.all(emailPromises);
 
-    // 5. KEMBALIKAN RESPONSE SUKSES
+    // 4. KEMBALIKAN RESPONSE SUKSES
     return NextResponse.json({ success: true, message: "Pendaftaran dan Distribusi Email Berhasil!" });
 
   } catch (error: any) {
