@@ -231,36 +231,117 @@ export function RegistrationForm() {
     setModalOpen(true)
   }
 
+  // ===================================================================
+  // REVISI HELPER: TANPA TIMESTAMP AGAR URL /logo/nama-tim & /bukti_transfer/nama-tim
+  // ===================================================================
+  async function uploadKeCloudinary(
+    base64Data: string, 
+    type: "logo" | "bukti", 
+    teamName: string
+  ): Promise<string> {
+    // Membuat nama tim bersih ramah URL (contoh: "Akatsuki Team" -> "akatsuki-team")
+    const cleanTeamName = teamName.toLowerCase().replace(/[^a-z0-9]/g, "-").replace(/-+/g, "-");
+    
+    // public_id langsung diisi nama tim (tanpa prefiks tipe & tanpa timestamp) agar URL-nya bersih bersih bersih!
+    const customFileName = cleanTeamName; 
+    const folderPath = type === "logo" ? "logo" : "bukti_transfer";
+
+    // Rekonstruksi Base64 menjadi file binary asli yang bernama kustom
+    const parts = base64Data.split(',');
+    const mime = parts[0].match(/:(.*?);/)?.[1] || "image/png";
+    const binaryStr = atob(parts[1]);
+    let len = binaryStr.length;
+    const u8arr = new Uint8Array(len);
+    
+    while (len--) {
+      u8arr[len] = binaryStr.charCodeAt(len);
+    }
+    
+    const extension = mime.split('/')[1] || 'png';
+    const namedFile = new File([u8arr], `${customFileName}.${extension}`, { type: mime });
+
+    const formData = new FormData()
+    formData.append("file", namedFile) 
+    formData.append("upload_preset", process.env.NEXT_PUBLIC_CLOUDINARY_UPLOAD_PRESET || "preset_twis7")
+    formData.append("folder", folderPath)
+
+    const cloudName = process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
+    if (!cloudName) {
+      throw new Error("Konfigurasi Cloud Name belum di-set di Vercel Environment Variables.")
+    }
+
+    const res = await fetch(`https://api.cloudinary.com/v1_1/${cloudName}/image/upload`, {
+      method: "POST",
+      body: formData,
+    })
+
+    if (!res.ok) {
+      throw new Error(`Nama tim "${teamName}" kemungkinan sudah terdaftar atau file gagal diunggah ke Cloudinary.`);
+    }
+
+    const data = await res.json()
+    return data.secure_url
+  }
+
+  // ==========================================
+  // CORE LOGIC: HANDLESUBMIT TO CLOUDINARY & VERCEL KV
+  // ==========================================
   async function handleSubmit() {
     setSubmitting(true)
     setServerError(null)
 
-    const payload = {
-      email: email.trim(),
-      namaTim: namaTim.trim(),
-      warna: hex,
-      logoTim: logo?.base64 ?? "", 
-      buktiTransfer: bukti?.base64 ?? "",
-      players: players.map((p) => ({
-        role: p.role,
-        namaLengkap: p.namaLengkap.trim(),
-        discord: p.discord.trim(),
-        ign: p.ign.trim(),
-        idDuelLinks: p.duelId,
-      })),
-    }
-    
     try {
+      // 1. Upload Logo & Dapatkan URL Ori
+      let logoUrlOriginal = ""
+      if (logo?.base64) {
+        logoUrlOriginal = await uploadKeCloudinary(logo.base64, "logo", namaTim)
+      }
+
+      // 2. Upload Bukti Transfer & Dapatkan URL Ori
+      let buktiUrlOriginal = ""
+      if (bukti?.base64) {
+        buktiUrlOriginal = await uploadKeCloudinary(bukti.base64, "bukti", namaTim)
+      }
+
+      // 3. Buat URL versi transformasi kompresi tinggi secara on-the-fly
+      const logoUrlCompressed = logoUrlOriginal.replace("/upload/", "/upload/f_auto,q_auto/");
+      const buktiUrlCompressed = buktiUrlOriginal.replace("/upload/", "/upload/f_auto,q_auto/");
+
+      // 4. Susun payload ringan berisi Teks dan Tautan Gambar pendek
+      const payload = {
+        email: email.trim(),
+        namaTim: namaTim.trim(),
+        warna: hex,
+        logoTim: {
+          original: logoUrlOriginal,
+          compressed: logoUrlCompressed
+        },
+        buktiTransfer: {
+          original: buktiUrlOriginal,
+          compressed: buktiUrlCompressed
+        },
+        players: players.map((p) => ({
+          role: p.role,
+          namaLengkap: p.namaLengkap.trim(),
+          discord: p.discord.trim(),
+          ign: p.ign.trim(),
+          idDuelLinks: p.duelId,
+         })),
+        createdAt: new Date().toISOString()
+      }
+      
+      // 5. Kirim payload ke API Route backend penyimpan Vercel KV
       const res = await fetch("/api/submit", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(payload),
       })
+      
       const result = await res.json()
 
-      if (result.status === "error") {
+      if (!res.ok || result.status === "error") {
         setSubmitting(false)
-        setServerError(result.message || "Terjadi kesalahan pada server. Silakan coba lagi.")
+        setServerError(result.message || "Terjadi kesalahan saat menyimpan ke Database KV.")
         return
       }
 
@@ -268,9 +349,9 @@ export function RegistrationForm() {
       setSubmitting(false)
       setModalOpen(false)
       setSuccess(true)
-    } catch {
+    } catch (error: any) {
       setSubmitting(false)
-      setServerError("Gagal terhubung ke server. Periksa koneksi internet Anda.")
+      setServerError(error.message || "Gagal memproses pendaftaran. Periksa koneksi internet Anda.")
     }
   }
 
