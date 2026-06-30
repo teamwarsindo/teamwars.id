@@ -57,6 +57,35 @@ export default function Page() {
         </div>
       </div>
 
+      {/* MODAL KONFIRMASI HAPUS DATA */}
+      {isConfirmTrashOpen && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-foreground/40 p-4 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="glass glow-border w-full max-w-sm rounded-2xl border bg-popover/90 p-6 shadow-2xl scale-in-95 animate-in">
+            <h3 className="text-lg font-bold text-foreground">Hapus Data Pendaftaran?</h3>
+            <p className="mt-2 text-sm text-muted-foreground">
+              Apakah Anda yakin ingin menghapus semua data pendaftaran yang tersimpan di browser ini? Tindakan ini tidak dapat dibatalkan.
+            </p>
+            <div className="mt-6 flex gap-3">
+              <button 
+                onClick={() => setIsConfirmTrashOpen(false)}
+                className="flex-1 rounded-xl border border-border bg-background py-2.5 text-sm font-medium hover:bg-muted transition-colors"
+              >
+                Batal
+              </button>
+              <button 
+                onClick={() => {
+                  localStorage.clear();
+                  window.location.reload();
+                }}
+                className="flex-1 rounded-xl bg-destructive py-2.5 text-sm font-semibold text-white shadow-lg transition-all hover:bg-destructive/90 active:scale-[0.98]"
+              >
+                Ya, Hapus
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* MAIN CONTENT WRAPPER */}
       <div className="relative z-10 flex w-full flex-1 flex-col items-center px-4 pb-6 pt-6 sm:px-6">
         
@@ -138,4 +167,3 @@ export default function Page() {
       </div>
     </main>
   )
-}
