@@ -424,7 +424,7 @@ export function RegistrationForm() {
                 </div>
                 
                 {/* Text Input dengan Placeholder */}
-                <input id="hexText" type="text" placeholder="#00BFFF" value={hex} onChange={(e) => {
+                <input id="hexText" type="text" placeholder="#00BFFF" value={hex || ""} onChange={(e) => {
                   const input = e.target.value if (input === "") { setHex("") return }
                   // Bersihkan input: hapus semua #, hapus karakter non-hex, batasi 6 karakter
                   const cleanHex = input.replace(/#/g, "").replace(/[^0-9a-fA-F]/g, "").slice(0, 6) setHex("#" + cleanHex)}}
