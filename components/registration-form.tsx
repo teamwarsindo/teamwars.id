@@ -26,7 +26,7 @@ function ErrorText({ msg }: { msg?: string }) {
 export function RegistrationForm() {
   const [email, setEmail] = useState("")
   const [namaTim, setNamaTim] = useState("")
-  const [hex, setHex] = useState("#3b82f6")
+  const [hex, setHex] = useState("")
   const [players, setPlayers] = useState<Player[]>(defaultPlayers)
   const [logo, setLogo] = useState<UploadedFile | null>(null)
   const [bukti, setBukti] = useState<UploadedFile | null>(null)
