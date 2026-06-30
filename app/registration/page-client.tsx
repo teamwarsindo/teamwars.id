@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image"
 import { RegistrationForm } from "@/components/registration-form"
 import { ThemeToggle } from "@/components/theme-toggle"
