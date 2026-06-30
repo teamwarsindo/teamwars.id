@@ -561,7 +561,7 @@ export function RegistrationForm() {
               disabled={!agreedData || !agreedRules} 
               className="w-full rounded-xl bg-primary py-4 text-base font-bold text-primary-foreground shadow-lg transition-all hover:brightness-110 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:brightness-100 disabled:active:scale-100 mt-2"
             >
-              Review Pendaftaran
+              Konfirmasi Pendaftaran
             </button>
           </div>
         </section>
