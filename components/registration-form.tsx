@@ -34,10 +34,11 @@ export function RegistrationForm() {
   // State Persetujuan
   const [agreedData, setAgreedData] = useState(false)
   const [agreedRules, setAgreedRules] = useState(false)
-
+  
   // State untuk Smart Paste
   const [bulkText, setBulkText] = useState("")
-
+  const [notification, setNotification] = useState<string | null>(null)
+  
   const [touchedFields, setTouchedFields] = useState<Record<string, boolean>>({})
   const [submitAttempted, setSubmitAttempted] = useState(false)
   const [modalOpen, setModalOpen] = useState(false)
@@ -45,7 +46,7 @@ export function RegistrationForm() {
   const [serverError, setServerError] = useState<string | null>(null)
   const [success, setSuccess] = useState(false)
   const [isDraftLoaded, setIsDraftLoaded] = useState(false)
-
+  
   function markTouched(key: string) {
     setTouchedFields((prev) => (prev[key] ? prev : { ...prev, [key]: true }))
   }
@@ -171,7 +172,9 @@ export function RegistrationForm() {
     setPlayers(newPlayers)
     setTouchedFields((prev) => ({ ...prev, ...newTouched }))
 
-    alert(`⚡ Berhasil mengekstrak ${Math.min(extractedData.length, MAX_PLAYERS)} data pemain! Perhatikan kotak berwarna merah jika ada data yang tidak sesuai format.`)
+    setNotification(`⚡ Berhasil mengekstrak ${Math.min(extractedData.length, MAX_PLAYERS)} data pemain! Perhatikan kotak berwarna merah jika ada data yang tidak sesuai format.`)
+    // Tambahkan timeout agar notifikasi hilang otomatis setelah 5 detik
+    setTimeout(() => setNotification(null), 5000)
     setBulkText("") 
   }
 
@@ -458,6 +461,12 @@ export function RegistrationForm() {
 
           {/* AREA SMART PASTE */}
           <div className="mb-6 rounded-xl border border-primary/30 bg-primary/5 p-4 sm:p-5">
+            {notification && (
+              <div className="mb-4 flex items-start gap-3 rounded-xl border border-emerald-500/20 bg-emerald-500/10 p-4 text-sm text-emerald-500 animate-in fade-in slide-in-from-top-2">
+                <CheckIcon className="mt-0.5 h-5 w-5 shrink-0" />
+                <p>{notification}</p>
+              </div>
+            )}
             <div className="mb-3">
               <h3 className="text-sm font-bold text-primary flex items-center gap-2">
                 ⚡ Smart Paste (Isi Cepat)
