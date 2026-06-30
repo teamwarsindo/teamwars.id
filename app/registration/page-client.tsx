@@ -9,6 +9,7 @@ import { ShieldIcon, DiscordIcon, RulesIcon, FormIcon, TrashIcon } from "@/compo
 
 export default function Page() {
   const [isCopied, setIsCopied] = useState(false);
+  const [isConfirmTrashOpen, setIsConfirmTrashOpen] = useState(false);
   const accountNumber = "0460967538";
 
   const handleCopy = async () => {
@@ -22,13 +23,9 @@ export default function Page() {
   };
 
   const handleClearStorage = () => {
-    const yakin = window.confirm("Apakah Anda yakin ingin menghapus semua data pendaftaran yang tersimpan di browser ini?");
-    if (yakin) {
-      localStorage.clear();
-      window.location.reload();
-    }
+    setIsConfirmTrashOpen(true);
   };
-
+  
   return (
     <main className="relative flex min-h-[100dvh] flex-col overflow-x-hidden bg-background text-foreground">
       
