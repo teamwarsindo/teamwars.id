@@ -405,12 +405,12 @@ export function RegistrationForm() {
           <div className="flex flex-col gap-4">
             <div>
               <label htmlFor="email" className="mb-1.5 block text-sm font-medium text-foreground">Email Aktif Perwakilan</label>
-              <input id="email" type="email" value={email} onChange={(e) => { setEmail(e.target.value); markTouched("email"); }} onBlur={() => markTouched("email")} className={`${inputBase} ${err("email") ? "border-destructive" : "border-border"}`} />
+              <input id="email" type="email" placeholder="registration@teamwars.web.id" value={email} onChange={(e) => { setEmail(e.target.value); markTouched("email"); }} onBlur={() => markTouched("email")} className={`${inputBase} ${err("email") ? "border-destructive" : "border-border"}`} />
               <ErrorText msg={err("email")} />
             </div>
             <div>
               <label htmlFor="namaTim" className="mb-1.5 block text-sm font-medium text-foreground">Nama Tim</label>
-              <input id="namaTim" type="text" value={namaTim} onChange={(e) => setNamaTim(sanitizeTeamName(e.target.value))} onBlur={() => markTouched("namaTim")} className={`${inputBase} ${err("namaTim") ? "border-destructive" : "border-border"}`} />
+              <input id="namaTim" type="text" placeholder="Team Wars Indonesia" value={namaTim} onChange={(e) => setNamaTim(sanitizeTeamName(e.target.value))} onBlur={() => markTouched("namaTim")} className={`${inputBase} ${err("namaTim") ? "border-destructive" : "border-border"}`} />
               <ErrorText msg={err("namaTim")} />
             </div>
             <div>
@@ -422,7 +422,8 @@ export function RegistrationForm() {
                 >
                   <input
                     type="color"
-                    value={isValidHex(hex) ? hex : "#000000"}
+                    value={isValidHex(hex) ? hex : "#00BFFF"}
+                    placeholder="#00BFFF"
                     onChange={(e) => setHex(e.target.value)}
                     className="absolute inset-0 h-full w-full cursor-pointer opacity-0"
                   />
