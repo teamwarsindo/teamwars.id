@@ -318,6 +318,9 @@ export function RegistrationForm() {
       const namaFileLogo = getFileName(logoUrlOriginal);
       const namaFileBukti = getFileName(buktiUrlOriginal);
 
+      // Ambil domain situs web saat ini (contoh: https://teamwars.id)
+      const baseUrl = window.location.origin;
+      
       // 3. Susun payload ringan menggunakan format URL MASKING rapi
       const payload = {
         email: email.trim(),
@@ -325,15 +328,15 @@ export function RegistrationForm() {
         warna: hex,
         logoTim: {
           // Otomatis berubah menjadi: /logo/nama-tim.png
-          original: `/logo/${namaFileLogo}`, 
+          original: `${baseUrl}/logo/${namaFileLogo}`, 
           // Otomatis berubah menjadi: /thumb-logo/nama-tim.png
-          compressed: `/thumb-logo/${namaFileLogo}` 
+          compressed: `${baseUrl}/thumb-logo/${namaFileLogo}` 
         },
         buktiTransfer: {
           // Otomatis berubah menjadi: /bukti/nama-tim.png
-          original: `/bukti/${namaFileBukti}`,
+          original: `${baseUrl}/bukti/${namaFileBukti}`,
           // Otomatis berubah menjadi: /thumb-bukti/nama-tim.png
-          compressed: `/thumb-bukti/${namaFileBukti}`
+          compressed: `${baseUrl}/thumb-bukti/${namaFileBukti}`
         },
         players: players.map((p) => ({
           role: p.role,
