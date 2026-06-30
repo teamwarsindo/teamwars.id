@@ -63,6 +63,15 @@ export function ReviewModal({
     }
   }, [open])
 
+  useEffect(() => {
+    if (open) { // Pastikan menggunakan 'open'
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "unset";
+    }
+    return () => { document.body.style.overflow = "unset"; };
+  }, [open]) // Pastikan dependensinya juga 'open'
+
   const captchaOk = useMemo(
     () => Number.parseInt(answer, 10) === a + b,
     [answer, a, b],
