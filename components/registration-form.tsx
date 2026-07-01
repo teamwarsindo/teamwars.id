@@ -186,12 +186,12 @@ export function RegistrationForm() {
 
   const fieldErrors = useMemo(() => {
     const errs: Record<string, string> = {}
-    if (!email.trim()) errs.email = "Kolom ini wajib diisi."
+    if (!email.trim()) errs.email = "Email wajib diisi."
     else if (!isValidEmail(email)) errs.email = "Format email tidak valid."
     
     const teamErr = validateTeamName(namaTim)
     if (teamErr) errs.namaTim = teamErr
-    else if (!namaTim.trim()) errs.namaTim = "Kolom ini wajib diisi."
+    else if (!namaTim.trim()) errs.namaTim = "Nama Tim wajib diisi."
     
     if (!isValidHex(hex)) errs.hex = "Format hex tidak valid (#RRGGBB)."
     if (!logo) errs.logo = "Logo tim wajib diunggah."
@@ -204,8 +204,8 @@ export function RegistrationForm() {
       const discordErr = validateDiscord(p.discord)
       if (discordErr) errs[`${p.id}-discord`] = discordErr
 
-      if (!p.ign.trim()) errs[`${p.id}-ign`] = "Kolom ini wajib diisi."
-      if (!p.duelId.trim()) errs[`${p.id}-duelId`] = "Kolom ini wajib diisi."
+      if (!p.ign.trim()) errs[`${p.id}-ign`] = "IGN wajib diisi."
+      if (!p.duelId.trim()) errs[`${p.id}-duelId`] = "ID Duel Links wajib diisi."
       else if (!isCompleteDuelId(p.duelId)) errs[`${p.id}-duelId`] = "ID harus berformat xxx-xxx-xxx."
     })
 
