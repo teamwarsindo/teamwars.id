@@ -435,7 +435,10 @@ export function RegistrationForm() {
                     setHex("#" + cleanHex)}}
                   onBlur={() => markTouched("hex")}
                   className={`${inputBase} font-mono ${err("hex") ? "border-destructive" : "border-border"}`} />
-                </div>
+                <p className="text-[11px] text-muted-foreground leading-relaxed">
+                  Warna ini akan digunakan untuk <strong>Role di Discord</strong> dan identitas tim di profil.
+                </p>
+              </div>
               <ErrorText msg={err("hex")} />
               </div>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
