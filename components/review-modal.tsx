@@ -146,7 +146,7 @@ export function ReviewModal({
               <Row label="Email" value={form.email} />
               
               {/* TASK 29: Posisi Warna Tim diletakkan di kotak (menggantikan posisi Nama Tim sebelumnya) */}
-              <div className="flex flex-col gap-0.5 border border-border py-2 last:border-0 sm:flex-row sm:justify-between sm:gap-4 items-start sm:items-center">
+              <div className="flex flex-col gap-0.5 border-b border-border py-2 last:border-0 sm:flex-row sm:justify-between sm:gap-4 items-start sm:items-center">
                 <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
                   Warna Tim
                 </span>
@@ -160,7 +160,7 @@ export function ReviewModal({
                 </div>
               </div>
               
-              <div className="flex flex-col gap-2 py-4 border border-border mt-2">
+              <div className="flex flex-col gap-2 py-4 mt-2">
                 <span className="text-xs font-bold uppercase tracking-wide text-muted-foreground mb-1">
                   Bukti Transfer
                 </span>
