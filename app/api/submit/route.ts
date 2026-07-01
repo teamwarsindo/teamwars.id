@@ -1,40 +1,45 @@
-import { NextResponse } from 'next/server';
+// app/api/submit/route.ts
+
+import { NextResponse, NextRequest } from 'next/server';
 import { Resend } from 'resend';
 import { kv } from '@vercel/kv';
+import { EMAIL_CONFIG } from '@/lib/config';
+
+// Import template yang sudah kita pisahkan
+import { 
+  getPesertaTemplate, 
+  getFinanceTemplate, 
+  getCreativeTemplate, 
+  getAdminTemplate 
+} from '@/lib/email-templates'; 
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-export async function POST(request: Request) {
+async function sendEmailSafe(params: any) {
+  try {
+    await resend.emails.send(params);
+  } catch (error) {
+    console.error(`Gagal kirim email ke ${params.to}:`, error);
+  }
+}
+
+export async function POST(request: NextRequest, context: any) {
   try {
     const data = await request.json();
-
-    // 1. DESTRUKTURISASI DATA DARI FRONTEND PAYLOAD
-    const { 
-      email, 
-      namaTim, 
-      warna,
-      logoTim,       // Berisi { original, compressed }
-      buktiTransfer, // Berisi { original, compressed }
-      players        // Array objek berisi data roster lengkap
-    } = data; 
+    const { email, namaTim, warna, logoTim, buktiTransfer, players } = data; 
 
     if (!namaTim) {
       return NextResponse.json({ success: false, message: "Nama tim tidak boleh kosong." }, { status: 400 });
     }
 
-    // Standardisasi slug/kunci untuk database (contoh: "Akatsuki Team" -> "akatsuki-team")
     const teamSlug = namaTim.toLowerCase().replace(/[^a-z0-9]/g, "-").replace(/-+/g, "-");
     const kvKey = `teams:${teamSlug}`;
 
-    // ===================================================================
-    // ATURAN UPLOAD DISESUAIKAN: 
-    // Membuang pengecekan 'kv.exists' agar sejalan dengan proteksi Cloudinary.
-    // Jika Cloudinary berhasil lolos (artinya nama tim belum ada/belum duplikat),
-    // maka data di KV di bawah ini akan langsung ditulis/disimpan dengan aman.
-    // ===================================================================
+    const exists = await kv.exists(kvKey);
+    if (exists) {
+      return NextResponse.json({ success: false, message: "Nama tim sudah terdaftar!" }, { status: 409 });
+    }
 
-    // 2. SIMPAN/TULIS DATA KE VERCEL KV
-    // A. Simpan data detail tim ke dalam Hash
     await kv.hset(kvKey, {
       namaTim: namaTim.trim(),
       warna: warna,
@@ -45,131 +50,49 @@ export async function POST(request: Request) {
       createdAt: new Date().toISOString(),
       statusVerifikasi: "Pending"
     });
-
-    // B. Masukkan slug tim ke dalam Global Set
     await kv.sadd("global:teams", teamSlug);
 
-    // 3. IDENTIFIKASI JABATAN UNTUK EMAIL
     const ketua = players.find((p: any) => p.role === "Ketua") || { namaLengkap: "-", discord: "-", idDuelLinks: "-" };
     const wakil = players.find((p: any) => p.role === "Wakil Ketua") || { namaLengkap: "-", discord: "-", idDuelLinks: "-" };
 
-    // 4. SIAPKAN DISTRIBUSI EMAIL VIA RESEND
-    const emailPromises = [];
+    // Kumpulkan semua data untuk dilempar ke template
+    const templateData = { namaTim, email, warna, ketua, wakil, logoTim, buktiTransfer, players, kvKey };
 
-    // --- A. Email ke Peserta ---
-    if (email) {
-      emailPromises.push(
-        resend.emails.send({
-          from: 'Teamwars Registration <regist@teamwars.web.id>',
+    context.waitUntil((async () => {
+      if (email) {
+        await sendEmailSafe({
+          from: EMAIL_CONFIG.sender,
           to: email,
           subject: `Pendaftaran Berhasil: Tim ${namaTim}`,
-          html: `
-            <div style="font-family: sans-serif; max-width: 600px; line-height: 1.6;">
-              <h2 style="color: ${warna || '#3b82f6'};">Halo, Tim ${namaTim}! 🎉</h2>
-              <p>Terima kasih telah mendaftar di <strong>TWI Season 7</strong>. Data roster dan bukti transfer Anda telah kami terima di sistem dan tersimpan di database.</p>
-              <p>Tim admin & finance kami akan segera melakukan proses verifikasi dokumen. Harap pastikan akun Discord <strong>${ketua.discord}</strong> tetap aktif untuk koordinasi lebih lanjut.</p>
-              <br/>
-              <p style="font-size: 12px; color: #666;">Maju terus dan persiapkan strategi terbaik tim Anda!</p>
-            </div>
-          `,
-        })
-      );
-    }
+          html: getPesertaTemplate(templateData), // <-- Panggil fungsi di sini
+        });
+      }
 
-    // --- B. Email ke Finance (Menerima URL Bukti Transfer FULL SIZE) ---
-    emailPromises.push(
-      resend.emails.send({
-        from: 'System Teamwars <regist@teamwars.web.id>',
-        to: 'finance@teamwars.web.id',
+      await sendEmailSafe({
+        from: EMAIL_CONFIG.sender,
+        to: EMAIL_CONFIG.to.finance,
         subject: `[Verifikasi Pembayaran] Tim ${namaTim}`,
-        html: `
-          <div style="font-family: sans-serif; max-width: 600px;">
-            <h2>Pengecekan Pembayaran Baru</h2>
-            <p>Tim <strong style="color: ${warna || '#000'};">${namaTim}</strong> baru saja mendaftar. Mohon segera periksa keaslian mutasi rekening mereka.</p>
-            <p><strong>Link Bukti Transfer (Original/Full Size):</strong> <br/> 
-               <a href="${buktiTransfer?.original}" target="_blank" style="color: #3b82f6; font-weight: bold;">${buktiTransfer?.original}</a>
-            </p>
-          </div>
-        `,
-      })
-    );
+        html: getFinanceTemplate(templateData), // <-- Panggil fungsi di sini
+      });
 
-    // --- C. Email ke Creative (Menerima URL Logo FULL SIZE) ---
-    emailPromises.push(
-      resend.emails.send({
-        from: 'System Teamwars <regist@teamwars.web.id>',
-        to: 'creative@teamwars.web.id',
+      await sendEmailSafe({
+        from: EMAIL_CONFIG.sender,
+        to: EMAIL_CONFIG.to.creative,
         subject: `[Aset Logo] Tim ${namaTim}`,
-        html: `
-          <div style="font-family: sans-serif; max-width: 600px;">
-            <h2>Aset Logo Tim Baru</h2>
-            <p>Berikut adalah aset logo mentah resolusi penuh untuk kebutuhan broadcast/overlay tim <strong>${namaTim}</strong>.</p>
-            <p><strong>Link Logo (Original/Full Size):</strong> <br/> 
-               <a href="${logoTim?.original}" target="_blank" style="color: #3b82f6; font-weight: bold;">${logoTim?.original}</a>
-            </p>
-          </div>
-        `,
-      })
-    );
+        html: getCreativeTemplate(templateData), // <-- Panggil fungsi di sini
+      });
 
-    // --- D. Email ke Admin ---
-    emailPromises.push(
-      resend.emails.send({
-        from: 'System Teamwars <regist@teamwars.web.id>',
-        to: 'admin@teamwars.web.id',
+      await sendEmailSafe({
+        from: EMAIL_CONFIG.sender,
+        to: EMAIL_CONFIG.to.admin,
         subject: `[Registrasi Baru] Data Lengkap Tim ${namaTim}`,
-        html: `
-          <div style="font-family: sans-serif; max-width: 600px;">
-            <h2>Data Pendaftaran Tim: ${namaTim}</h2>
-            <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%; border-color: #e2e8f0; margin-bottom: 20px;">
-              <tr style="background-color: #f8fafc;"><td width="35%"><strong>Nama Tim</strong></td><td><strong style="color: ${warna || '#000'};">${namaTim}</strong></td></tr>
-              <tr><td><strong>Warna Identitas</strong></td><td><code>${warna}</code></td></tr>
-              <tr><td><strong>Email Kontak</strong></td><td>${email}</td></tr>
-              <tr><td><strong>Ketua Tim (Discord)</strong></td><td>${ketua.namaLengkap} (${ketua.discord})</td></tr>
-              <tr><td><strong>Wakil Ketua (Discord)</strong></td><td>${wakil.namaLengkap} (${wakil.discord})</td></tr>
-              <tr><td><strong>KV Database Key</strong></td><td><code>${kvKey}</code></td></tr>
-            </table>
-
-            <h3>📋 Roster Lengkap Pemain</h3>
-            <table border="1" cellpadding="8" cellspacing="0" style="border-collapse: collapse; width: 100%; border-color: #e2e8f0; font-size: 13px;">
-              <thead style="background-color: #f1f5f9;">
-                <tr>
-                  <th>No</th>
-                  <th>Jabatan</th>
-                  <th>Nama Lengkap</th>
-                  <th>Discord</th>
-                  <th>IGN</th>
-                  <th>ID Duel Links</th>
-                </tr>
-              </thead>
-              <tbody>
-                ${players.map((p: any, i: number) => `
-                  <tr>
-                    <td align="center">${i + 1}</td>
-                    <td><strong>${p.role}</strong></td>
-                    <td>${p.namaLengkap}</td>
-                    <td><code>${p.discord}</code></td>
-                    <td>${p.ign}</td>
-                    <td style="font-family: monospace;">${p.idDuelLinks}</td>
-                  </tr>
-                `).join('')}
-              </tbody>
-            </table>
-          </div>
-        `,
-      })
-    );
-
-    // 5. EKSEKUSI SEMUA EMAIL
-    await Promise.all(emailPromises);
+        html: getAdminTemplate(templateData), // <-- Panggil fungsi di sini
+      });
+    })());
 
     return NextResponse.json({ success: true, message: "Pendaftaran berhasil diproses!" });
 
   } catch (error: any) {
-    console.error("API Route Error:", error);
-    return NextResponse.json(
-      { success: false, error: error.message || "Terjadi kesalahan internal" },
-      { status: 500 }
-    );
+    return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
 }
