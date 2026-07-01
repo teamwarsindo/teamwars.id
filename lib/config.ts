@@ -5,7 +5,8 @@ export const LAUNCH_TARGET = new Date(LAUNCH_TARGET_DATE).getTime()
 // Waktu Tutup: 14 hari setelah buka
 // export const CLOSE_TARGET = LAUNCH_TARGET + (14 * 24 * 60 * 60 * 1000)
 // Waktu Tutup: 21 Juli 2026, 21:07 WIB
-export const LAUNCH_TARGET_DATE = "2026-07-21T07:21:07+07:00"
+export const CLOSE_TARGET_DATE = "2026-07-21T07:21:07+07:00"
+export const CLOSE_TARGET = new Date(CLOSE_TARGET_DATE).getTime()
 
 // Saklar manual untuk halaman Rules
 export const IS_RULES_OPEN = false;
