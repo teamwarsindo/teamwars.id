@@ -133,7 +133,7 @@ export default function Page() {
                   </p>
                 </div>
                 <p className="text-3xl font-black text-foreground">
-                  Rp 300.000
+                  Rp 250.000
                 </p>
               </div>
 
