@@ -31,10 +31,6 @@ export function RegistrationForm() {
   const [logo, setLogo] = useState<UploadedFile | null>(null)
   const [bukti, setBukti] = useState<UploadedFile | null>(null)
   
-  // State Persetujuan
-  const [agreedData, setAgreedData] = useState(false)
-  const [agreedRules, setAgreedRules] = useState(false)
-  
   // State untuk Smart Paste
   const [bulkText, setBulkText] = useState("")
   const [notification, setNotification] = useState<string | null>(null)
@@ -214,7 +210,7 @@ export function RegistrationForm() {
   }, [email, namaTim, hex, logo, bukti, players, duplicateFields])
 
   const hasFieldErrors = Object.keys(fieldErrors).length > 0
-  const canSubmit = !hasFieldErrors && rosterRuleOk && agreedData && agreedRules
+  const canSubmit = !hasFieldErrors && rosterRuleOk
   
   function err(key: string) {
     const e = fieldErrors[key]
@@ -550,34 +546,9 @@ export function RegistrationForm() {
 
         <section className="glass glow-border rounded-2xl border p-5 sm:p-6">
           <div className="space-y-4">
-            <label className="flex items-start gap-3 cursor-pointer rounded-xl border border-border bg-card p-4 transition-colors hover:bg-muted/50">
-              <input 
-                type="checkbox" 
-                checked={agreedData} 
-                onChange={(e) => setAgreedData(e.target.checked)}
-                className="mt-1 h-4 w-4 shrink-0 rounded border-primary bg-background text-primary focus:ring-primary focus:ring-offset-background"
-              />
-              <span className="text-sm text-muted-foreground">
-                Saya mewakili tim menyatakan bahwa seluruh data yang diisi adalah benar, asli, dan valid.
-              </span>
-            </label>
-
-            <label className="flex items-start gap-3 cursor-pointer rounded-xl border border-border bg-card p-4 transition-colors hover:bg-muted/50">
-              <input 
-                type="checkbox" 
-                checked={agreedRules} 
-                onChange={(e) => setAgreedRules(e.target.checked)}
-                className="mt-1 h-4 w-4 shrink-0 rounded border-primary bg-background text-primary focus:ring-primary focus:ring-offset-background"
-              />
-              <span className="text-sm text-muted-foreground">
-                Saya mewakili tim menyetujui seluruh syarat dan ketentuan yang tertulis di dalam <a href="/rules" target="_blank" rel="noopener noreferrer" className="font-semibold text-primary hover:underline">Rulebook TWI Season 7</a>.
-              </span>
-            </label>
-
             <button 
               type="button" 
               onClick={handleReviewClick} 
-              disabled={!agreedData || !agreedRules} 
               className="w-full rounded-xl bg-primary py-4 text-base font-bold text-primary-foreground shadow-lg transition-all hover:brightness-110 active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:brightness-100 disabled:active:scale-100 mt-2"
             >
               Konfirmasi Pendaftaran
