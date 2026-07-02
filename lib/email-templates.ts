@@ -1,4 +1,12 @@
-export const getPesertaTemplate = ({ namaTim, warna, ketua, wakil, logoTim, buktiTransfer, players }: any) => `
+// @/lib/email-templates.ts
+
+export const getPesertaTemplate = ({ namaTim, warna, ketua, wakil, logoTim, buktiTransfer, players }: any) => {
+  // Jalankan transformasi Cloudinary jika url asli tersedia, jika tidak ada (fallback) pakai compressed proxy
+  const logoSrc = logoTim?.cloudinaryUrl 
+    ? logoTim.cloudinaryUrl.replace('/upload/', '/upload/ar_1:1,c_fill,g_auto,r_max,w_160,f_png,q_auto/') 
+    : logoTim?.compressed;
+
+  return `
   <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 650px; margin: 0 auto; background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
     <div style="background-color: ${warna || '#1e293b'}; padding: 30px; text-align: center;">
       <h1 style="color: #ffffff; margin: 0; font-size: 24px; letter-spacing: 1px;">Pendaftaran TWI Season 7 Berhasil!</h1>
@@ -17,13 +25,13 @@ export const getPesertaTemplate = ({ namaTim, warna, ketua, wakil, logoTim, bukt
         </table>
 
         <div style="margin-top: 20px; display: flex; gap: 15px;">
-          <div style="flex: 1; text-align: center; background: #fff; padding: 10px; border: 1px solid #e2e8f0; border-radius: 4px;">
-            <p style="font-size: 12px; font-weight: bold; margin-top: 0; color: #64748b;">Logo Tim</p>
-            <img src="${logoTim?.compressed}" alt="Logo Tim" style="max-width: 100%; height: auto; max-height: 100px; object-fit: contain;" />
+          <div style="flex: 1; text-align: center; background: #fff; padding: 15px 10px; border: 1px solid #e2e8f0; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <p style="font-size: 12px; font-weight: bold; margin-top: 0; margin-bottom: 10px; color: #64748b;">Logo Tim</p>
+            <img src="${logoSrc}" alt="Logo Tim" style="width: 90px; height: 90px; border-radius: 50%; object-fit: cover; border: 2px solid ${warna || '#e2e8f0'};" />
           </div>
-          <div style="flex: 1; text-align: center; background: #fff; padding: 10px; border: 1px solid #e2e8f0; border-radius: 4px;">
-            <p style="font-size: 12px; font-weight: bold; margin-top: 0; color: #64748b;">Bukti Transfer</p>
-            <img src="${buktiTransfer?.compressed}" alt="Bukti Transfer" style="max-width: 100%; height: auto; max-height: 100px; object-fit: contain;" />
+          <div style="flex: 1; text-align: center; background: #fff; padding: 15px 10px; border: 1px solid #e2e8f0; border-radius: 6px; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+            <p style="font-size: 12px; font-weight: bold; margin-top: 0; margin-bottom: 10px; color: #64748b;">Bukti Transfer</p>
+            <img src="${buktiTransfer?.compressed}" alt="Bukti Transfer" style="max-width: 100%; height: auto; max-height: 90px; object-fit: contain;" />
           </div>
         </div>
       </div>
@@ -54,7 +62,8 @@ export const getPesertaTemplate = ({ namaTim, warna, ketua, wakil, logoTim, bukt
       <p style="font-size: 12px; color: #94a3b8; margin: 5px 0 0 0;">&copy; 2026 Teamwars Indonesia. All rights reserved.</p>
     </div>
   </div>
-`;
+  `;
+};
 
 export const getFinanceTemplate = ({ namaTim, ketua, buktiTransfer }: any) => `
   <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333; border: 1px solid #e2e8f0; border-radius: 8px; overflow: hidden;">
