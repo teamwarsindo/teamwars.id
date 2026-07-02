@@ -309,33 +309,32 @@ export function RegistrationForm() {
       // 2. Upload Bukti Transfer & Dapatkan URL Ori dari Cloudinary
       let buktiUrlOriginal = ""
       if (bukti?.base64) {
-        buktiUrlOriginal = await uploadKeCloudinary(bukti.base64, "bukti", namaTim)
+        try {
+          buktiUrlOriginal = await uploadKeCloudinary(bukti.base64, "bukti", namaTim)
+        } catch (err: any) {
+          // Fallback penanganan khusus jika upload bukti error secara independen
+          throw new Error(err.message || "Gagal mengunggah Bukti Transfer.");
+        }
       }
 
-      // === TAMBAHKAN HELPER DISINI UNTUK MENGAMBIL NAMA FILE AKHIR ===
-      // Fungsi ini mengambil bagian paling belakang URL (contoh: "admin-twi.jpg")
       const getFileName = (url: string) => url.split('/').pop() || '';
       const namaFileLogo = getFileName(logoUrlOriginal);
       const namaFileBukti = getFileName(buktiUrlOriginal);
-
-      // Ambil domain situs web saat ini (contoh: https://teamwars.id)
       const baseUrl = window.location.origin;
       
-      // 3. Susun payload ringan menggunakan format URL MASKING rapi
+      // 3. TASK 2 FIX: Menyuntikkan cloudinaryUrl asli ke dalam payload
       const payload = {
         email: email.trim(),
         namaTim: namaTim.trim(),
         warna: hex,
         logoTim: {
-          // Otomatis berubah menjadi: /logo/nama-tim.png
+          cloudinaryUrl: logoUrlOriginal,                      // 🟢 MASUK KE DB KV
           original: `${baseUrl}/logo/${namaFileLogo}`, 
-          // Otomatis berubah menjadi: /thumb-logo/nama-tim.png
           compressed: `${baseUrl}/thumb-logo/${namaFileLogo}` 
         },
         buktiTransfer: {
-          // Otomatis berubah menjadi: /bukti/nama-tim.png
+          cloudinaryUrl: buktiUrlOriginal,                     // 🟢 MASUK KE DB KV
           original: `${baseUrl}/bukti/${namaFileBukti}`,
-          // Otomatis berubah menjadi: /thumb-bukti/nama-tim.png
           compressed: `${baseUrl}/thumb-bukti/${namaFileBukti}`
         },
         players: players.map((p) => ({
@@ -372,21 +371,6 @@ export function RegistrationForm() {
       setServerError(error.message || "Gagal memproses pendaftaran. Periksa koneksi internet Anda.")
     }
   }
-  
-  // Komponen UI saat sukses berhasil register
-  if (success) {
-    return (
-      <div className="flex min-h-[60vh] flex-col items-center justify-center px-6 text-center">
-        <div className="glow-border mb-6 flex h-20 w-20 items-center justify-center rounded-full bg-primary">
-          <CheckIcon className="h-10 w-10 text-primary-foreground" />
-        </div>
-        <h2 className="text-2xl font-bold text-foreground">Pendaftaran Berhasil!</h2>
-        <p className="mt-2 max-w-md text-pretty text-muted-foreground">
-          Tim <span className="font-semibold text-foreground">{namaTim}</span> telah berhasil didaftarkan.
-        </p>
-      </div>
-    )
-  }
 
   return (
     <>
@@ -413,30 +397,26 @@ export function RegistrationForm() {
             <div>
               <label htmlFor="hexText" className="mb-1.5 block text-sm font-medium text-foreground">Warna Identitas Tim (Hex)</label>
               <div className="flex items-center gap-3">
-                {/* Color Picker */}
                 <div className="relative h-11 w-12 shrink-0 overflow-hidden rounded-lg border border-border shadow-sm transition-colors focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary"
-                  // Jika hex kosong/invalid, tampilkan warna default (misal hitam) agar picker tidak crash
                   style={{ backgroundColor: isValidHex(hex) ? hex : "#00BFFF" }} >
                   <input type="color" value={isValidHex(hex) ? hex : "#00BFFF"} onChange={(e) => setHex(e.target.value)} className="absolute inset-0 h-full w-full cursor-pointer opacity-0" />
                 </div>
                 
-                {/* Text Input dengan Placeholder */}
                 <input
                   id="hexText" 
                   type="text" 
                   placeholder="#00BFFF" 
                   value={hex || ""} 
-                  onChange={(e) => setHex(sanitizeHex(e.target.value))} // <-- Cukup panggil fungsi ini saja
+                  onChange={(e) => setHex(sanitizeHex(e.target.value))}
                   onBlur={() => markTouched("hex")}
                   className={`${inputBase} font-mono ${err("hex") ? "border-destructive" : "border-border"}`} 
                 />
               </div>
               <ErrorText msg={err("hex")} />
-              {/* Teks Bantuan diletakkan DI BAWAH (di luar flex box di atas) */}
               <p className="text-xs text-muted-foreground leading-relaxed mt-1">
                 Warna ini akan digunakan untuk Role di Discord dan identitas tim di profil.
               </p>
-              </div>
+            </div>
             <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
               <FileDropzone id="logo" label="Logo Tim" value={logo} onChange={(f) => { setLogo(f); markTouched("logo") }} error={err("logo")} />
               <FileDropzone id="bukti" label="Bukti Transfer" value={bukti} onChange={(f) => { setBukti(f); markTouched("bukti") }} error={err("bukti")} />
@@ -567,7 +547,7 @@ export function RegistrationForm() {
         onConfirm={handleSubmit} 
       />
       
-      {/* TASK 6: Panggil komponen terpisah yang barusan dibuat */}
+      {/* TASK 6 FIX: Modal Sukses Mengambang */}
       <SuccessModal 
         open={success} 
         onClose={() => window.location.reload()} 
