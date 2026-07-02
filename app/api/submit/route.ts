@@ -1,16 +1,14 @@
 // app/api/submit/route.ts
-
 import { NextResponse, NextRequest } from 'next/server';
 import { Resend } from 'resend';
 import { kv } from '@vercel/kv';
 import { EMAIL_CONFIG } from '@/lib/config';
 
-// Import template yang sudah kita pisahkan
+// 🔴 getAdminTemplate SUDAH DIHAPUS DARI SINI
 import { 
   getPesertaTemplate, 
   getFinanceTemplate, 
-  getCreativeTemplate, 
-  getAdminTemplate 
+  getCreativeTemplate 
 } from '@/lib/email-templates'; 
 
 const resend = new Resend(process.env.RESEND_API_KEY);
@@ -55,7 +53,6 @@ export async function POST(request: NextRequest, context: any) {
     const ketua = players.find((p: any) => p.role === "Ketua") || { namaLengkap: "-", discord: "-", idDuelLinks: "-" };
     const wakil = players.find((p: any) => p.role === "Wakil Ketua") || { namaLengkap: "-", discord: "-", idDuelLinks: "-" };
 
-    // Kumpulkan semua data untuk dilempar ke template
     const templateData = { namaTim, email, warna, ketua, wakil, logoTim, buktiTransfer, players, kvKey };
 
     context.waitUntil((async () => {
@@ -63,31 +60,26 @@ export async function POST(request: NextRequest, context: any) {
         await sendEmailSafe({
           from: EMAIL_CONFIG.sender,
           to: email,
-          subject: `Pendaftaran Berhasil: Tim ${namaTim}`,
-          html: getPesertaTemplate(templateData), // <-- Panggil fungsi di sini
+          subject: `Status Pendaftaran: Tim ${namaTim} [Teamwars S7]`,
+          html: getPesertaTemplate(templateData),
         });
       }
 
       await sendEmailSafe({
         from: EMAIL_CONFIG.sender,
         to: EMAIL_CONFIG.to.finance,
-        subject: `[Verifikasi Pembayaran] Tim ${namaTim}`,
-        html: getFinanceTemplate(templateData), // <-- Panggil fungsi di sini
+        subject: `[Verifikasi Finance] Pembayaran Tim ${namaTim}`,
+        html: getFinanceTemplate(templateData),
       });
 
       await sendEmailSafe({
         from: EMAIL_CONFIG.sender,
         to: EMAIL_CONFIG.to.creative,
-        subject: `[Aset Logo] Tim ${namaTim}`,
-        html: getCreativeTemplate(templateData), // <-- Panggil fungsi di sini
+        subject: `[Aset Creative] Identitas Tim ${namaTim}`,
+        html: getCreativeTemplate(templateData),
       });
-
-      await sendEmailSafe({
-        from: EMAIL_CONFIG.sender,
-        to: EMAIL_CONFIG.to.admin,
-        subject: `[Registrasi Baru] Data Lengkap Tim ${namaTim}`,
-        html: getAdminTemplate(templateData), // <-- Panggil fungsi di sini
-      });
+      
+      // 🔴 BLOK EMAIL KE ADMIN SUDAH DIHAPUS SEPENUHNYA
     })());
 
     return NextResponse.json({ success: true, message: "Pendaftaran berhasil diproses!" });
@@ -95,4 +87,4 @@ export async function POST(request: NextRequest, context: any) {
   } catch (error: any) {
     return NextResponse.json({ success: false, error: error.message }, { status: 500 });
   }
-}
+    }
