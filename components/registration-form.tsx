@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { FileDropzone } from "@/components/file-dropzone"
 import { ReviewModal } from "@/components/review-modal"
+import { SuccessModal } from "@/components/success-modal"
 import { TrashIcon, PlusIcon, AlertIcon, CheckIcon } from "@/components/icons"
 import { 
   ROSTER_ROLES, MIN_PLAYERS, MAX_PLAYERS, STORAGE_KEY,
@@ -555,7 +556,23 @@ export function RegistrationForm() {
         </section>
       </form>
 
-      <ReviewModal open={modalOpen} onClose={() => setModalOpen(false)} form={{ email, namaTim, hex, players }} logo={logo} bukti={bukti} submitting={submitting} serverError={serverError} onConfirm={handleSubmit} />
+      <ReviewModal 
+        open={modalOpen} 
+        onClose={() => setModalOpen(false)} 
+        form={{ email, namaTim, hex, players }} 
+        logo={logo} 
+        bukti={bukti} 
+        submitting={submitting} 
+        serverError={serverError} 
+        onConfirm={handleSubmit} 
+      />
+      
+      {/* TASK 6: Panggil komponen terpisah yang barusan dibuat */}
+      <SuccessModal 
+        open={success} 
+        onClose={() => window.location.reload()} 
+        namaTim={namaTim} 
+      />
     </>
   )
 }
